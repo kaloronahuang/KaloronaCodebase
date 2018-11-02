@@ -26,26 +26,6 @@ void addpath(int src, int dst)
 int res[maxn];
 int cur = 0;
 
-void toposort()
-{
-    queue<int> pq;
-    for (int i = 1; i <= n; i++)
-        if (indeg[i] == 0)
-            pq.push(i);
-    while (!pq.empty())
-    {
-        int curt = pq.front();
-        pq.pop();
-        res[cur++] = curt;
-        for (int i = head[curt]; i != -1; i = edges[i].next)
-        {
-            indeg[i]--;
-            if (indeg[i] == 0)
-                pq.push(i);
-        }
-    }
-}
-
 int F[maxn][maxn];
 
 void dfs(int u)
@@ -58,12 +38,12 @@ void dfs(int u)
             int jto = edges[i].to;
             dfs(jto);
             for (int lens = 1; lens <= deg[jto] && lens <= len; lens++)
-            {
                 F[u][len] = max(F[u][len], F[u][len - lens] + F[jto][lens]);
-            }
         }
     }
 }
+
+int HF[maxn];
 
 int main()
 {
@@ -74,9 +54,10 @@ int main()
         cin >> k >> s;
         weight[i] = s;
         if (k != 0)
-        {
-            addpath(k, i), indeg[i]++;
-            deg[k]++;
-        }
+            addpath(k, i), indeg[i]++, deg[k]++;
     }
+    for (int len = 1; len <= m; len++)
+    {
+    }
+    return 0;
 }

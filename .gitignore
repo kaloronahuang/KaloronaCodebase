@@ -1,2 +1,4 @@
 #ignore following files:
 /Docs
+*.exe
+*.out
