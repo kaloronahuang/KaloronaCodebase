@@ -3,7 +3,7 @@
 #include <queue>
 using namespace std;
 
-const int maxn = 320;
+const int maxn = 2100;
 struct edge
 {
     int to, next;
@@ -23,41 +23,46 @@ void addpath(int src, int dst)
     head[src] = current++;
 }
 
-int res[maxn];
-int cur = 0;
-
 int F[maxn][maxn];
+int sizes[maxn];
 
-void dfs(int u)
+void dfss(int u)
 {
-    F[u][0] = 0;
-    for (int len = 1; len <= deg[u]; len++)
+    sizes[u] = 1;
+    for (int i = head[u]; i != -1; i = edges[i].next)
     {
-        for (int i = head[u]; i != -1; i = edges[i].next)
-        {
-            int jto = edges[i].to;
-            dfs(jto);
-            for (int lens = 1; lens <= deg[jto] && lens <= len; lens++)
-                F[u][len] = max(F[u][len], F[u][len - lens] + F[jto][lens]);
-        }
+        dfss(edges[i].to);
+        sizes[u] += sizes[edges[i].to];
     }
 }
 
-int HF[maxn];
+void dfs(int u)
+{
+    for (int i = 1; i <= m; i++)
+        F[u][i] = weight[u];
+    for (int i = head[u]; i != -1; i = edges[i].next)
+    {
+        dfs(edges[i].to);
+        int jto = edges[i].to;
+        for (int len = m + 1; len >= 2; len--)
+            for (int lens = 0; lens < len; lens++)
+                F[u][len] = max(F[u][len], F[u][len - lens] + F[jto][lens]);
+    }
+}
 
 int main()
 {
+    fill(head, head + maxn, -1);
     cin >> n >> m;
     for (int i = 1; i <= n; i++)
     {
         int k, s;
         cin >> k >> s;
         weight[i] = s;
-        if (k != 0)
-            addpath(k, i), indeg[i]++, deg[k]++;
+        addpath(k, i), indeg[i]++, deg[k]++;
     }
-    for (int len = 1; len <= m; len++)
-    {
-    }
+    dfss(0);
+    dfs(0);
+    cout << F[0][m + 1];
     return 0;
 }
