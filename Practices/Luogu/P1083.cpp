@@ -24,13 +24,17 @@ struct BIT
         return x & -x;
     }
 
+    void AddRange(int x, int y, int d)
+    {
+    }
+
     void Add(int x, int d)
     {
+        C[x] += d;
         while (x <= n)
         {
-            C[x] += d;
             Cmin[x] = min(Cmin[x], C[x]);
-            x = lowbit(x);
+            x += lowbit(x);
         }
     }
 
@@ -64,6 +68,8 @@ int main()
         scanf("%d", &r[i]), table.Add(i, r[i]);
     for (int i = 1; i <= m; i++)
         scanf("%d%d%d", &d[i], &s[i], &t[i]);
-
+    for (int i = 1; i <= m; i++)
+    {
+    }
     return 0;
 }
