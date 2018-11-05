@@ -7,17 +7,7 @@ using namespace std;
 const int maxn = 4000090;
 #define ll long long
 ll arr[maxn];
-ll dp[maxn];
-ll lengths[maxn];
-ll stpos[maxn];
 ll n;
-
-ll gcd(ll a, ll b)
-{
-    if (a < b)
-        return gcd(b, a);
-    return (b == 0) ? a : gcd(b, a % b);
-}
 
 ll read()
 {
@@ -31,48 +21,24 @@ ll read()
     return x * f;
 }
 
-int ans = 1;
-
-void genDP()
-{
-    for (int i = 1; i <= n; i++)
-        for (int j = i + 1; j <= n; j++)
-        {
-            bool flag1 = false;
-            int last = arr[i];
-            for (int k = i; k <= j; k++)
-                if (flag1 = ((last = gcd(last, arr[k])) == 1))
-                    break;
-            if (flag1)
-                break;
-            else
-                for (int k = i; k <= j; k++)
-                    if (arr[k] == last)
-                    {
-                        ans = max(j - i + 1, ans);
-                        break;
-                    }
-        }
-}
+int ans = 0;
 
 int main()
 {
-    freopen("interval.in", "r", stdin);
-    freopen("interval.out", "w", stdout);
-    cin >> n;
-    bool flag = false;
+    n = read();
+    for (int i = 1; i <= n; i++)
+        arr[i] = read();
     for (int i = 1; i <= n; i++)
     {
-        arr[i] = read();
-        if (arr[i] == 1)
-            flag = true;
+        int l, r;
+        l = r = i;
+        while (arr[l - 1] % arr[i] == 0 && l > 1)
+            l--;
+        while (arr[r + 1] % arr[i] == 0 && r < n)
+            r++;
+        ans = max(ans, r - l + 1);
+        i = r;
     }
-    if (flag)
-    {
-        cout << n;
-        return 0;
-    }
-    genDP();
-    cout << ans;
+    printf("%lld", ans);
     return 0;
 }

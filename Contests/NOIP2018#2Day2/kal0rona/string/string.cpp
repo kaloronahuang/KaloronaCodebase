@@ -5,58 +5,41 @@
 
 using namespace std;
 
-const int mod = 1000000007;
-const int maxn = 2020;
 #define ll long long
-int a, b, c, d;
+const ll mod = 1000000007;
+const ll maxn = 4000;
+ll a, b, c, d;
 ll ans = 0;
-string seqT;
+ll C[maxn][maxn];
 
-bool isValid(string son, string fat)
+// note:
+// num of T:C(c+d,d)
+
+ll comb(ll n, ll m)
 {
-    int ssize = son.length();
-    int cur = 0;
-    int siz = fat.length();
-    for (int i = 0; i < siz; i++)
-    {
-        bool flag = true;
-        while (cur < ssize)
-        {
-            if (son[cur++] == fat[i])
-            {
-                flag = false;
-                break;
-            }
-        }
-        if (flag)
-            return false;
-    }
-    return true;
+    if (n < m)
+        return 0;
+    return C[n][m];
 }
 
 int main()
 {
-    freopen("string.in", "r", stdin);
-    freopen("string.out", "w", stdout);
     cin >> a >> b >> c >> d;
-    for (int i = 1; i <= c; i++)
-        seqT += "0";
-    for (int i = c + 1; i - c <= d; i++)
-        seqT += "1";
-    //bool res = isValid("01100010", "01001");
-    do
-    {
-        string sub;
-        for (int i = 1; i <= a; i++)
-            sub += "0";
-        for (int i = a + 1; i - a <= b; i++)
-            sub += "1";
-        do
-        {
-            if (isValid(sub, seqT))
-                ans++, ans %= mod;
-        } while (next_permutation(sub.begin(), sub.end()));
-    } while (next_permutation(seqT.begin(), seqT.end()));
+    C[0][0] = 1;
+    for (ll i = 1; i < maxn; i++)
+        C[i][1] = i % mod, C[i][i] = 1, C[i][0] = 1;
+    for (ll n = 3; n < maxn; n++)
+        for (ll m = 2; m < n; m++)
+            C[n][m] = (C[n - 1][m - 1] + C[n - 1][m]) % mod;
+    ll tmp = 0;
+    for (ll i = (d == 0) ? a - c : 0; i <= a - c; i++)
+        for (ll j = (c == 0) ? b - d : 0; j <= b - d; j++)
+            tmp += ((((d == 0) ? 1 : (comb(a - c - i + d - 1, d - 1))) *
+                     ((c == 0) ? 1 : comb(b - d - j + c - 1, c - 1))) %
+                    mod * comb(i + j, i)) %
+                   mod,
+                tmp %= mod;
+    ans = comb(c + d, c) * tmp % mod;
     cout << ans;
     return 0;
 }
