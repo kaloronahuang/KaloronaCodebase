@@ -1,4 +1,7 @@
 {
 	"window.zoomLevel": 0,
-	"editor.formatOnSave": true
+	"editor.formatOnSave": true,
+	"files.associations": {
+		"ostream": "cpp"
+	}
 }
