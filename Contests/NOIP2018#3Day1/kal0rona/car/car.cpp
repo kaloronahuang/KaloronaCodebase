@@ -1,115 +1,109 @@
 #include <iostream>
 #include <cstdio>
-#include <cstring>
+#include <bitset>
 #include <vector>
 #include <algorithm>
 using namespace std;
 const int maxn = 200020;
 struct edge
 {
-    int to, next;
-    vector<int> mks;
-} edges[maxn << 1];
-int head[maxn], fa[maxn], n, m, current = 0;
-int P[21][maxn], dep[maxn], q;
-bool marks[maxn];
-void addpath(int s, int d)
-{
-    edges[current].to = d;
-    edges[current].next = head[s];
-    head[s] = current++;
-}
+    int to;
+    bitset<1010> cars;
+};
+vector<edge> G[maxn];
+int n, num, m, x, y, fa[maxn], dep[maxn], ans, q;
+bitset<1010> check[maxn];
 void dfs(int u, int d)
 {
     dep[u] = d;
-    P[0][u] = fa[u];
-    for (int i = 1; (1 << i) <= n; i++)
-        P[i][u] = P[i - 1][P[i - 1][u]];
-    for (int i = head[u]; i != -1; i = edges[i].next)
-        if (edges[i].to != fa[u])
-            dfs(edges[i].to, d + 1);
+    int siz = G[u].size();
+    for (int i = 0; i < siz; i++)
+        if (G[u][i].to != fa[u])
+            dfs(G[u][i].to, d + 1);
 }
-int inquire(int x, int y)
+int getLCA(int x, int y)
 {
-    if (dep[x] > dep[y])
+    if (dep[x] < dep[y])
         swap(x, y);
-    for (int i = 20; i >= 0; i--)
-        if (dep[y] >= dep[x] && dep[P[i][y]] >= dep[x] && P[i][y] != 0)
-            y = P[i][y];
+    while (dep[x] != dep[y])
+        x = fa[x];
     if (x == y)
         return x;
-    for (int i = 20; i >= 0; i--)
-        if (P[i][x] != P[i][y])
-            x = P[i][x], y = P[i][y];
-    return P[0][x];
+    while (x != y)
+        x = fa[x], y = fa[y];
+    return x;
 }
-void dfs_edit(int u, int s, int id)
+void mark(int u, int lca, int id)
 {
-    if (dep[u] < dep[s])
+    if (u == lca)
         return;
-    if (u == s)
-        return;
-    for (int i = head[u]; i != -1; i = edges[i].next)
-        if (edges[i].to == fa[u])
-        {
-            edges[i].mks.push_back(id);
-            dfs_edit(edges[i].to, s, id);
-            break;
-        }
+    int siz = G[u].size();
+    for (int i = 0; i < siz; i++)
+        if (fa[u] == G[u][i].to)
+            G[u][i].cars.set(id), mark(fa[u], lca, id);
 }
-vector<int> ans;
-bool flag = true;
-void getdfs(int u, int s)
+bitset<1010> finalone;
+bool flag = false;
+void goup(int u, int lca, bitset<1010> prev)
 {
-    if (u == s)
+    if (u == lca)
+    {
+        finalone = prev;
         return;
-    for (int i = head[u]; i != -1; i = edges[i].next)
-        if (edges[i].to == fa[u])
+    }
+    int siz = G[u].size();
+    for (int i = 0; i < siz; i++)
+        if (G[u][i].to == fa[u])
         {
-            int siz = edges[i].mks.size();
-            if (siz == 0)
+            if (G[u][i].cars.count() == 0)
             {
-                flag = false;
+                flag = true;
                 return;
             }
-            for (int j = 0; j < siz; j++)
-                ans.push_back(edges[i].mks[j]);
-            getdfs(fa[u], s);
-            break;
+            if ((prev & G[u][i].cars).count() == 0)
+                ans++, prev |= G[u][i].cars;
+            goup(G[u][i].to, lca, prev);
+            return;
         }
 }
 int main()
 {
-    freopen("car.in", "r", stdin);
-    freopen("car.out", "w", stdout);
-    memset(head, -1, sizeof(head));
     scanf("%d", &n);
-    for (int i = 1; i <= n - 1; i++)
-        scanf("%d", &fa[i + 1]), addpath(i + 1, fa[i + 1]), addpath(fa[i + 1], i + 1);
+    for (int i = 2; i <= n; i++)
+        scanf("%d", &num), fa[i] = num, G[i].push_back(edge{num, bitset<1010>(0)}), G[num].push_back(edge{i, bitset<1010>(0)});
     scanf("%d", &m);
-    dfs(1, 0);
-    int x, y;
+    dfs(1, 1);
     for (int i = 1; i <= m; i++)
     {
         scanf("%d%d", &x, &y);
-        int lca = inquire(x, y);
-        dfs_edit(x, lca, i), dfs_edit(y, lca, i);
+        int lca = getLCA(x, y);
+        if (lca == 1 && !(x == 1 || y == 1))
+        {
+            bitset<1010> tmp;
+            tmp.set(x, y);
+            check[i] = tmp;
+        }
+        mark(x, lca, i), mark(y, lca, i);
     }
     scanf("%d", &q);
     for (int i = 0; i < q; i++)
     {
-        flag = true;
+        flag = false;
         scanf("%d%d", &x, &y);
-        int lca = inquire(x, y);
-        ans.resize(0);
-        getdfs(x, lca), getdfs(y, lca);
-        if (!flag)
-        {
-            printf("%d\n", -1);
-            continue;
-        }
-        ans.erase(unique(ans.begin(), ans.end()), ans.end());
-        printf("%d\n", ans.size());
+        int lca = getLCA(x, y);
+        ans = 0, goup(x, lca, 0), goup(y, lca, 0);
+        if (lca == 1)
+            for (int j = 1; j <= m; j++)
+                // TODO;
+                if (check[j] && finalone[j] == 1)
+                {
+                    ans -= 1;
+                    break;
+                }
+        if (flag)
+            printf("-1\n");
+        else
+            printf("%d\n", ans);
     }
     return 0;
 }
