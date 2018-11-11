@@ -1,42 +1,88 @@
 // P3372.cpp
-// Segment tree;
 #include <iostream>
+
 using namespace std;
 
-const int maxn = 100010;
-int arr[maxn];
+const int maxn = 100020;
+#define ll long long
+ll arr[maxn];
+ll tree[maxn * 4];
+ll lazy[maxn * 4];
+ll n, m;
 
-struct segTree
+void build(int l, int r, int node)
 {
-    int tree[4 * maxn];
-
-    void build(int st, int ed, int nodeIndex)
+    if (l == r)
+        tree[node] = arr[l];
+    else
     {
-        if (st == ed)
-            tree[nodeIndex] = arr[st];
-        else
-        {
-            int m = (st + ed) / 2;
-            build(st, m, 2 * nodeIndex), build(m + 1, ed, 2 * nodeIndex + 1);
-            // 2 trees update.
-            tree[nodeIndex] = tree[2 * nodeIndex] + tree[2 * nodeIndex + 1];
-        }
+        int mid = (l + r) >> 1;
+        build(l, mid, node * 2), build(mid + 1, r, node * 2 + 1);
+        tree[node] = tree[node * 2] + tree[node * 2 + 1];
     }
+}
 
-    int query(int l, int r, int curl, int curr, int intervalIdx)
+ll sum(int ql, int qr, int l, int r, int node)
+{
+    if (ql <= l && r <= qr)
+        return tree[node];
+    ll ret = 0;
+    int mid = (l + r) >> 1;
+    if (l != r && lazy[node])
+        tree[2 * node] += lazy[node] * (mid - l + 1),
+            tree[2 * node + 1] += lazy[node] * (r - mid),
+            lazy[2 * node] += lazy[node],
+            lazy[2 * node + 1] += lazy[node];
+    lazy[node] = 0;
+    if (ql <= mid)
+        ret += sum(ql, qr, l, mid, node * 2);
+    if (qr > mid)
+        ret += sum(ql, qr, mid + 1, r, node * 2 + 1);
+    return ret;
+}
+
+void update(int ql, int qr, int c, int l, int r, int node)
+{
+    if (ql <= l && r <= qr)
     {
-        if (l <= curl && r >= curr || l == r)
-            return tree[intervalIdx];
-        int mid = (curl + curr) / 2;
-        int sum = 0;
-        if (l <= mid)
-            sum += query(l, r, curl, mid, 2 * n);
-        if (r > mid)
-            sum += query(l, r, mid + 1, curr, intervalIdx * 2 + 1);
-        return sum;
+        tree[node] += c * (r - l + 1), lazy[node] += c;
+        return;
     }
-};
+    ll mid = (l + r) >> 1;
+    if (l != r && lazy[node])
+        tree[2 * node] += lazy[node] * (mid - l + 1),
+            tree[2 * node + 1] += lazy[node] * (r - mid),
+            lazy[2 * node] += lazy[node],
+            lazy[2 * node + 1] += lazy[node];
+    lazy[node] = 0;
+    if (ql <= mid)
+        update(ql, qr, c, l, mid, 2 * node);
+    if (qr > mid)
+        update(ql, qr, c, mid + 1, r, 2 * node + 1);
+    tree[node] = tree[node * 2] + tree[2 * node + 1];
+}
 
 int main()
 {
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++)
+        cin >> arr[i];
+    build(1, n, 1);
+    for (int i = 0; i < m; i++)
+    {
+        ll opt, x, y, k;
+        cin >> opt;
+        switch (opt)
+        {
+        case 1:
+            cin >> x >> y >> k;
+            update(x, y, k, 1, n, 1);
+            break;
+        case 2:
+            cin >> x >> y;
+            cout << sum(x, y, 1, n, 1) << endl;
+            break;
+        }
+    }
+    return 0;
 }

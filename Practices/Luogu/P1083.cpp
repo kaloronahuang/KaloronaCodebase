@@ -1,69 +1,50 @@
 // P1083.cpp
 #include <iostream>
-#include <cstdio>
 
 using namespace std;
 
-const int maxn = 1001000;
+const int maxn = 1000200;
 const int INF = 0x7fffffff;
+int arr[maxn], diff[maxn], d[maxn], l[maxn], r[maxn], need[maxn];
 int n, m;
-int r[maxn], d[maxn], s[maxn], t[maxn];
 
-struct BIT
+bool judge(int x)
 {
-    int Cmin[maxn];
-    int C[maxn];
-
-    BIT()
+    fill(diff, diff + maxn, 0);
+    for (int i = 1; i <= x; i++)
+        diff[l[i]] += d[i], diff[r[i] + 1] -= d[i];
+    for (int i = 1; i <= n; i++)
     {
-        fill(Cmin, Cmin + maxn, INF);
+        need[i] = need[i - 1] + diff[i];
+        if (need[i] > arr[i])
+            return false;
     }
-
-    inline int lowbit(int x)
-    {
-        return x & -x;
-    }
-
-    void Add(int x, int d)
-    {
-        while (x <= n)
-        {
-            C[x] += d;
-            Cmin[x] = min(Cmin[x], C[x]);
-            x = lowbit(x);
-        }
-    }
-
-    int QueryMin(int x, int y)
-    {
-        int res = INF;
-        while (y >= x)
-        {
-            res = min(res, Cmin[y]);
-            y--;
-            for (; y - lowbit(y) >= x; y -= lowbit(y))
-                res = min(res, Cmin[y]);
-        }
-        return res;
-    }
-};
-
-void solve()
-{
-    for (int i = 1; i <= m; i++)
-    {
-    }
+    return true;
 }
 
 int main()
 {
-    // I/O;
     cin >> n >> m;
-    BIT table;
     for (int i = 1; i <= n; i++)
-        scanf("%d", &r[i]), table.Add(i, r[i]);
+        cin >> arr[i];
     for (int i = 1; i <= m; i++)
-        scanf("%d%d%d", &d[i], &s[i], &t[i]);
-
+        cin >> d[i] >> l[i] >> r[i];
+    int left = 1;
+    int right = n;
+    if (judge(n))
+    {
+        cout << 0;
+        return 0;
+    }
+    while (left < right)
+    {
+        int mid = (left + right) >> 1;
+        if (judge(mid))
+            left = mid + 1;
+        else
+            right = mid;
+    }
+    cout << -1 << endl
+         << left;
     return 0;
 }
