@@ -4,5 +4,6 @@
 	"files.associations": {
 		"ostream": "cpp",
 		"bitset": "cpp"
-	}
+	},
+	"terminal.integrated.shell.windows": "C:\\Windows\\System32\\cmd.exe"
 }
