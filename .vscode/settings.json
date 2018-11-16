@@ -3,7 +3,8 @@
 	"editor.formatOnSave": true,
 	"files.associations": {
 		"ostream": "cpp",
-		"bitset": "cpp"
+		"bitset": "cpp",
+		"iostream": "cpp"
 	},
-	"terminal.integrated.shell.windows": "C:\\Windows\\System32\\cmd.exe"
+	"terminal.integrated.shell.windows": "%SystemRoot%/system32/cmd.exe"
 }
