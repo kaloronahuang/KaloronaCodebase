@@ -5,6 +5,5 @@
 		"ostream": "cpp",
 		"bitset": "cpp",
 		"iostream": "cpp"
-	},
-	"terminal.integrated.shell.windows": "%SystemRoot%/system32/cmd.exe"
+	}
 }
