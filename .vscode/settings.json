@@ -4,6 +4,10 @@
 	"files.associations": {
 		"ostream": "cpp",
 		"bitset": "cpp",
-		"iostream": "cpp"
-	}
+		"iostream": "cpp",
+		"cmath": "cpp",
+		"vector": "cpp"
+	},
+	"editor.fontSize": 16,
+	"editor.fontFamily": "Consolas, 'Courier New', monospace"
 }
