@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cstring>
+#include <cstdio>
 using namespace std;
 const int maxn = 70;
 int n, arr[maxn], stcnt, len;

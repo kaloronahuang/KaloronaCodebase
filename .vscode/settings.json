@@ -56,7 +56,8 @@
 		"typeindex": "cpp",
 		"typeinfo": "cpp",
 		"utility": "cpp",
-		"valarray": "cpp"
+		"valarray": "cpp",
+		"algorithm": "cpp"
 	},
 	"editor.fontSize": 16,
 	"editor.fontFamily": "Consolas, 'Courier New', monospace",
