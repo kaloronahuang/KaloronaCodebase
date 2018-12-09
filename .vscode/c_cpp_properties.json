@@ -14,13 +14,16 @@
         {
             "name": "Windows",
             "includePath": [
-                "C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+                "%MINGW_PATH%/include/*",
+                "%MINGW_PATH%/lib/gcc/x86_64-w64-mingw32/4.9.2/include/*",
+                "%MINGW_PATH%/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++/*",
+                "%MINGW_PATH%/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++/backward/*",
+                "%MINGW_PATH%/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++/x86_64-w64-mingw32/32/*"
             ],
-            "defines": [],
             "compilerPath": "C:/Program Files (x86)/Dev-Cpp/MinGW64/bin/g++.exe",
             "cStandard": "c11",
             "cppStandard": "c++11",
-            "intelliSenseMode": "clang-x64"
+            "intelliSenseMode": "gcc-x64"
         }
     ],
     "version": 4
