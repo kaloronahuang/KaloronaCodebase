@@ -56,9 +56,9 @@
 		"typeinfo": "cpp",
 		"utility": "cpp",
 		"valarray": "cpp",
-		"algorithm": "cpp"
+		"algorithm": "cpp",
+		"string": "cpp"
 	},
 	"editor.fontSize": 16,
-	"editor.fontFamily": "Consolas, 'Courier New', monospace",
-	"C_Cpp.errorSquiggles": "Disabled"
+	"editor.fontFamily": "Consolas, 'Courier New', monospace"
 }
