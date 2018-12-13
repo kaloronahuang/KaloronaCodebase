@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <algorithm>
 using namespace std;
-const int maxn = 310;
+const int maxn = 500;
 int n, tmp, siz, ans = 17;
 struct gap
 {
