@@ -1,10 +1,22 @@
-# Kalorona's Codebase
-This repo contains the codes I wrote in preparing and studying for the Olympiad in Informatics. Generally, I solve problems in following online judges:
+# KaloronaCodebase
+## Introduction
 
-luogu.org , HDU OJ, POJ, BZOJ(lydsy)
+This is a repo containing all my codes about the OI (a kind of competitive programming). Generally, you will be able to get Accepted codes for the problems on following online judges:
 
-I am a beginner in this field. Hope people to find out my mistakes to help me improve myself.
+- Luogu.org (a young and user friendly site)
+- HDU-OJ (a famous online judge by Hangzhou Dianzi Keji University)
+- POJ (also a famous OJ by Peking University)
+- Codeforces (an international contest site with many stallions in coding)
+- Contest-Hunter (a OJ for a book by Yudong Li)
+- BZOJ aka lydsy (a OJ with bunches of problems)
+- Openjudge (a open judge site by Peking University)
+- AtCoder (an international site located in Japan with many great contests)
+- Quest OJ (the official online judge by The Attached Middle School Attached to Jiangxi Normal University)
 
-Here's my blog(in Chinese generally...):https://kaloronahuang.com
-Twitter:@kaloronahuang
-E-Mail:kaloronahuang@outlook.com
+## Contact & Issues
+
+Please follow @kaloronahuang on Twitter to contact with me or send email at kaloronahuang@outlook.com. My personal blog is at kaloronahuang.com
+
+Issue template:
+
+Title with:[Problem ID & Source OJ] Problem Description
