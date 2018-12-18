@@ -17,7 +17,7 @@ struct team
 bool init()
 {
     scanf("%d%d%d", &n, &p1, &p2);
-    if (n == 0)
+    if (n == 0 && p1 == 0 && p2 == 0)
         return false;
     tot = p1 + p2;
     for (int i = 0; i < maxm; i++)
@@ -25,31 +25,30 @@ bool init()
     return true;
 }
 int find(int x) { return x == fa[x] ? x : fa[x] = find(fa[x]); }
-void merge(int x, int y) { fa[find(x)] = find(y); }
 // 1 divine, 2 devil
 void solve()
 {
-    cur = 0;
-    memset(cnt, 0, sizeof(cnt));
-    for (int i = 1; i <= n; i++)
+    while (n--)
     {
         int u, v;
         char opt[10];
         scanf("%d%d%s", &u, &v, opt);
         if (opt[0] == 'n')
-            merge(u, v + n), merge(u + n, v);
+            fa[find(u)] = find(v + tot), fa[find(u + tot)] = find(v);
         else
-            merge(u, v), merge(u + n, v + n);
+            fa[find(u)] = find(v), fa[find(u + tot)] = find(v + tot);
     }
+    cur = 0;
+    memset(cnt, 0, sizeof(cnt));
     for (int i = 1; i <= tot; i++)
     {
         int root = find(i);
         if (cnt[root] == 0 && root <= tot)
-            nodes[++cur] = team{root, find(i + tot)};
+            nodes[++cur] = (team){root, find(i + tot)};
         cnt[root]++;
     }
     memset(dp, 0, sizeof(dp));
-    memset(pre, 0, sizeof(pre));
+    //memset(pre, 0, sizeof(pre));
     dp[0][0] = 1;
     for (int i = 1; i <= cur; i++)
         for (int j = 0; j <= p1; j++)
@@ -58,12 +57,12 @@ void solve()
                 if (j + cnt[nodes[i].sam] <= p1)
                 {
                     dp[i][j + cnt[nodes[i].sam]] += dp[i - 1][j];
-                    pre[i][j + cnt[nodes[i].sam]] = 1;
+                    pre[i][j + cnt[nodes[i].sam]] = true;
                 }
                 if (j + cnt[nodes[i].diff] <= p1)
                 {
                     dp[i][j + cnt[nodes[i].diff]] += dp[i - 1][j];
-                    pre[i][j + cnt[nodes[i].diff]] = 0;
+                    pre[i][j + cnt[nodes[i].diff]] = false;
                 }
             }
     if (dp[cur][p1] != 1)
@@ -71,7 +70,6 @@ void solve()
         puts("no");
         return;
     }
-    T.clear();
     int C = p1;
     for (int i = cur; i >= 1; i--)
         if (pre[i][C])
@@ -84,6 +82,7 @@ void solve()
         if (find(T.begin(), T.end(), rt) != T.end())
             printf("%d\n", i);
     }
+    T.clear();
     printf("end\n");
 }
 int main()
