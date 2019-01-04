@@ -2,81 +2,50 @@
 #include <iostream>
 #include <cstdio>
 #include <cstring>
+#include <cstdlib>
 #include <cmath>
 #include <algorithm>
-#include <vector>
-#include <map>
 #define ll long long
-#define pr pair<ll, ll>
 using namespace std;
-const int MX_N = 10020, M_M = 30020, INF = 0x3f3f3f3f;
-ll n, m1, m2, s[MX_N], k;
-bool isPrime[M_M];
-map<ll, ll> getFactors(ll num, ll par)
-{
-    map<ll, ll> vec;
-    ll pre = num, limit = sqrt(num);
-    for (int i = 2; i <= limit; i++)
-        if (isPrime[i])
-        {
-            for (k = 0; num > 0 && num % i == 0; num /= i, k++)
-                ;
-            if (k != 0)
-                vec[i] = k * par;
-            num = pre;
-        }
-    return vec;
-}
+const int MX_N = 30020, INF = 0x3f3f3f3f;
+ll n, m1, m2, arr[MX_N], pipePrime[MX_N], cellPrime[MX_N], lit, ans = INF;
 int main()
 {
     scanf("%lld%lld%lld", &n, &m1, &m2);
     for (int i = 1; i <= n; i++)
-        scanf("%lld", &s[i]);
-    memset(isPrime, true, sizeof(isPrime));
-    isPrime[1] = false;
-    for (int i = 2; i < M_M; i++)
-        if (isPrime[i])
-            for (int k = 2; i * k < M_M; k++)
-                isPrime[i * k] = false;
-    ll id = -1, tim = INF;
-    map<ll, ll> pre = getFactors(m1, m2);
+        scanf("%lld", &arr[i]);
+    if (m1 == 1)
+    {
+        printf("0");
+        return 0;
+    }
+    for (int i = 2; m1 != 1; i++)
+    {
+        while (!(m1 % i))
+            m1 /= i, pipePrime[i] += m2;
+        lit = max(lit, (ll)i);
+    }
     for (int i = 1; i <= n; i++)
     {
-        map<ll, ll> now = getFactors(s[i], 1);
-        ll ti = -1;
-        bool flag = false;
-        for (std::map<ll, ll>::iterator it = now.begin(); it != now.end(); it++)
-        {
-            ll key = it->first, val = it->second;
-            if (pre.count(key) == 0)
+        ll now = 0;
+        for (int j = 2; j <= lit; j++)
+            if (pipePrime[j] != 0)
             {
-                flag = true;
-                break;
-            }
-            if (pre[key] % val == 0)
-            {
-                if (ti == -1)
-                    ti = pre[key] / val;
-                else if (ti != pre[key] / val)
+                ll tim = 0;
+                while (!(arr[i] % j))
+                    arr[i] /= j, tim++;
+                if (!tim)
                 {
-                    flag = true;
+                    now = INF;
                     break;
                 }
+                now = max(now, (pipePrime[j] - 1) / tim);
             }
-            else
-            {
-                flag = true;
-                break;
-            }
-        }
-        if (flag)
-            continue;
-        else if (ti < tim)
-            tim = ti, id = i;
+        ans = min(ans, now);
     }
-    if (id == -1)
-        printf("%lld", (ll)-1);
+    if (ans != INF)
+        printf("%lld", ans + 1);
     else
-        printf("%lld", tim);
+        printf("-1");
     return 0;
 }
