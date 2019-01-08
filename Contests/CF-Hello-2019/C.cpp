@@ -18,9 +18,7 @@ int main()
     scanf("%I64d", &n);
     for (ll i = 1; i <= n; i++)
         cin >> tmp, strs.push_back(tmp);
-    sort(strs.begin(), strs.end());
-    strs.erase(unique(strs.begin(), strs.end()), strs.end());
-    ll csiz = strs.size();
+    ll csiz = n;
     for (ll i = 0; i < csiz; i++)
     {
         string buff = strs[i];
@@ -43,8 +41,8 @@ int main()
     }
     ll res = 0;
     for (ll i = 0; i < 5 * MX_N; i++)
-        res += lft[i] * rig[i];
-    res += (numOfEmpty * (numOfEmpty - 1)) >> 1;
+        res += min(lft[i], rig[i]);
+    res += (numOfEmpty) >> 1;
     printf("%I64d", res);
     return 0;
 }
