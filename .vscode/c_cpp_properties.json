@@ -24,16 +24,6 @@
             "cStandard": "c11",
             "cppStandard": "c++11",
             "intelliSenseMode": "gcc-x64"
-        },
-        {
-            "name": "MinGW",
-            "includePath": [
-                "%HEADER%/*"
-            ],
-            "compilerPath": "C:/MinGW/g++.exe",
-            "cStandard": "c11",
-            "cppStandard": "c++11",
-            "intelliSenseMode": "gcc-x64"
         }
     ],
     "version": 4
