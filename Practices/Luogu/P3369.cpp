@@ -1,5 +1,6 @@
 // P3369.cpp
 #include <iostream>
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -7,58 +8,118 @@
 using namespace std;
 const int MAX_N = 100020;
 int ch[MAX_N][2], key[MAX_N], val[MAX_N], siz[MAX_N], tot, root;
-void update(int p) { siz[p] = siz[ch[p][0]] + siz[ch[p][1]] + 1; }
-int generate(int value)
+void update(int x) { siz[x] = siz[ch[x][0]] + siz[ch[x][1]] + 1; }
+void rotate(int &u, int dir)
 {
-    siz[++tot] = 1;
-    val[tot] = value, key[tot] = rand();
-    return tot;
+    int t = ch[u][dir];
+    ch[u][dir] = ch[t][!dir], ch[t][!dir] = u;
+    update(u), update(t), u = t;
 }
-void split(int u, int &a, int &b, int value)
+void insert(int x, int &u)
+{
+    if (u == 0)
+    {
+        u = ++tot;
+        val[u] = x, siz[u] = 1, key[u] = rand();
+        return;
+    }
+    siz[u]++;
+    if (x <= val[u])
+    {
+        insert(x, ch[u][0]);
+        if (key[ch[u][0]] < key[u])
+            rotate(u, 0);
+    }
+    else
+    {
+        insert(x, ch[u][1]);
+        if (key[ch[u][1]] < key[u])
+            rotate(u, 1);
+    }
+    update(u);
+}
+void remove(int x, int &u)
+{
+    if (val[u] == x)
+    {
+        if (ch[u][0] * ch[u][1] == 0)
+        {
+            u = ch[u][0] + ch[u][1];
+            return;
+        }
+        if (key[ch[u][0]] > key[ch[u][1]])
+            rotate(u, 1), remove(x, ch[u][0]);
+        else
+            rotate(u, 0), remove(x, ch[u][1]);
+    }
+    else if (val[u] > x)
+        remove(x, ch[u][0]);
+    else
+        remove(x, ch[u][1]);
+    update(u);
+}
+int find(int u, int x)
 {
     if (!u)
-        a = b = 0;
-    else
-    {
-        if (val[u] <= value)
-            a = u, split(ch[u][1], ch[u][1], b, value);
-        else
-            b = u, split(ch[u][0], a, ch[u][0], value);
-        update(u);
-    }
+        return 1;
+    if (val[u] >= x)
+        return find(ch[u][0], x);
+    return siz[ch[u][0]] + find(ch[u][1], x) + 1;
 }
-int merge(int x, int y)
+int revfind(int u, int rk)
 {
-    if (!x || !y)
-        return x + y;
-    update(x), update(y);
-    if (key[x] < key[y])
-    {
-        ch[x][1] = merge(ch[x][1], y);
-        update(x);
-        return x;
-    }
-    else
-    {
-        ch[y][0] = merge(x, ch[y][0]);
-        update(y);
-        return y;
-    }
+    if (siz[ch[u][0]] + 1 == rk)
+        return val[u];
+    if (siz[ch[u][0]] >= rk)
+        return revfind(ch[u][0], rk);
+    return revfind(ch[u][1], rk - siz[ch[u][0]] - 1);
 }
-void insert(int value)
+int previous(int u, int x)
 {
-    int a, b;
-    split(root, a, b, value);
-    root = merge(merge(a, generate(value)), b);
+    if (!u)
+        return -2e9;
+    if (val[u] < x)
+        return max(val[u], previous(ch[u][1], x));
+    return previous(ch[u][0], x);
 }
-void remove(int value)
+int backward(int u, int x)
 {
-    int a, b, c;
-    split(root, a, c, value), split(a, a, b, value - 1);
-    b = merge()
+    if (!u)
+        return 2e9;
+    if (val[u] > x)
+        return min(val[u], backward(ch[u][0], x));
+    return backward(ch[u][1], x);
 }
 int main()
 {
     srand(time(NULL));
+    int n;
+    scanf("%d", &n);
+    while (n--)
+    {
+        int opt, x;
+        scanf("%d%d", &opt, &x);
+        switch (opt)
+        {
+        case 1:
+            insert(x, root);
+            break;
+        case 2:
+            remove(x, root);
+            break;
+        case 3:
+            printf("%d\n", find(root, x));
+            break;
+        case 4:
+            printf("%d\n", revfind(root, x));
+            break;
+        case 5:
+            printf("%d\n", previous(root, x));
+            break;
+        case 6:
+            printf("%d\n", backward(root, x));
+            break;
+        }
+    }
     return 0;
 }
