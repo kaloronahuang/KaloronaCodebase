@@ -60,5 +60,6 @@
 		"string": "cpp"
 	},
 	"editor.fontSize": 16,
-	"editor.fontFamily": "Consolas, 'Courier New', monospace"
+	"editor.fontFamily": "Consolas, 'Courier New', monospace",
+	"C_Cpp.intelliSenseEngineFallback": "Enabled"
 }
