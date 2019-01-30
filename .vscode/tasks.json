@@ -27,6 +27,10 @@
                     "severity": 4,
                     "message": 5
                 }
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
             }
         },
         {
@@ -39,10 +43,7 @@
                 "-g"
             ],
             "type": "shell",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "group": "build",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
