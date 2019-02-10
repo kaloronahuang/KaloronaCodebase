@@ -4,7 +4,7 @@
 This is a repo containing all my codes about the OI (a kind of competitive programming). Generally, you will be able to get Accepted codes for the problems on following online judges:
 
 - Luogu.org (a young and user friendly site)
-- HDU-OJ (a famous online judge by Hangzhou Dianzi Keji University)
+- HDU-OJ (a famous online judge by Hangzhou Dianzi University)
 - POJ (also a famous OJ by Peking University)
 - Codeforces (an international contest site with many stallions in coding)
 - Contest-Hunter (a OJ for a book by Yudong Li)
