@@ -6,8 +6,9 @@
 #define ls (p << 1)
 #define rs ((p << 1) | 1)
 #define mid ((l + r) >> 1)
+#define ll long long
 using namespace std;
-const int MAX_N = 100200, INF = 0x3f3f3f3f;
+const ll MAX_N = 100200, INF = 0x3f3f3f3f, DEFUALT = 123456789123456789;
 struct edge
 {
     int to, nxt, w;

@@ -57,9 +57,16 @@
 		"utility": "cpp",
 		"valarray": "cpp",
 		"algorithm": "cpp",
-		"string": "cpp"
+		"string": "cpp",
+		"codecvt": "cpp",
+		"cuchar": "cpp",
+		"memory": "cpp",
+		"optional": "cpp",
+		"shared_mutex": "cpp",
+		"string_view": "cpp"
 	},
 	"editor.fontSize": 16,
 	"editor.fontFamily": "Consolas, 'Courier New', monospace",
-	"C_Cpp.intelliSenseEngineFallback": "Enabled"
+	"C_Cpp.intelliSenseEngineFallback": "Enabled",
+	"python.pythonPath": "/usr/bin/python3"
 }
