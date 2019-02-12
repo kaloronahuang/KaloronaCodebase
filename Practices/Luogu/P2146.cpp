@@ -6,7 +6,7 @@
 using namespace std;
 const int MAX_N = 1e5 + 20;
 int n, head[MAX_N], current, tmpx, q, siz[MAX_N], dfn[MAX_N], low[MAX_N], son[MAX_N];
-int tag[MAX_N << 1], tree[MAX_N << 2], fa[MAX_N], dep[MAX_N], tot, top[MAX_N];
+int tag[MAX_N << 2], tree[MAX_N << 2], fa[MAX_N], dep[MAX_N], tot, top[MAX_N];
 char opt[20];
 struct edge
 {
