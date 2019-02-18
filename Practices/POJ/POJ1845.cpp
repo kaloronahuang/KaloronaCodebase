@@ -1,31 +1,53 @@
 // POJ1845.cpp
-#include <iostream>
+#include <bits/stdc++.h>
 #define ll long long
 using namespace std;
-const int p = 9901;
-ll a, b;
-ll quickpow(ll base, ll tim, ll mod)
+const int MOD = 9901;
+ll A, B, p[20], c[20], tot;
+void divide(ll num)
 {
-    ll ans = 1;
-    for (; tim; tim >>= 1)
+    for (ll i = 2; i * i <= num; i++)
+        if (num % i == 0)
+        {
+            tot++;
+            while (num % i == 0)
+                c[tot]++, num /= i;
+            p[tot] = i;
+        }
+    if (num > 1)
+        p[++tot] = num, c[tot] = 1;
+}
+ll quick_power(ll base, ll tim, ll mod)
+{
+    base %= mod;
+    ll ans = 1 % mod;
+    while (tim)
+    {
         if (tim & 1)
-            base = base * ans % mod, ans = ans * ans % mod;
-        else
-            ans = ans * ans % mod;
+            ans = ans * base % mod;
+        base = base * base % mod;
+        tim >>= 1;
+    }
     return ans;
 }
-ll sum(ll pc, ll c)
-{
-    if (c == 1)
-        return (pc + 1) % p;
-    if (c & 1)
-        return (1 + quickpow(pc, (c + 1) >> 1, p)) * sum(pc, (c - 1) >> 1) % p;
-    else
-        return (1 + quickpow(pc, c >> 1, p)) * sum(pc, (c >> 1) - 1) % p;
-}
-
 int main()
 {
-    cin >> a >> b;
+    scanf("%lld%lld", &A, &B);
+    divide(A);
+    ll ans = 1;
+    for (int i = 1; i <= tot; i++)
+    {
+        if ((p[i] - 1) % MOD == 0)
+        {
+            ans = (B * c[i] + 1) % MOD * ans % MOD;
+            continue;
+        }
+        ll x = quick_power(p[i], B * c[i] + 1, MOD);
+        x = (x - 1 + MOD) % MOD;
+        ll bas = p[i] - 1;
+        bas = quick_power(bas, MOD - 2, MOD);
+        ans = ans * x % MOD * bas % MOD;
+    }
+    printf("%lld", ans);
     return 0;
 }
