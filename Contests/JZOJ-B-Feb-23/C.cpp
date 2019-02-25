@@ -1,40 +1,38 @@
 // C.cpp
 #include <bits/stdc++.h>
 using namespace std;
-const int MAX_N = 560, dirx[4] = {-1, 1, 0, 0}, diry[4] = {0, 0, -1, 1}, INF = 0x3f3f3f3f;
+const int MAX_N = 5600, dirx[4] = {-1, 1, 0, 0}, diry[4] = {0, 0, -1, 1}, INF = 0x3f3f3f3f;
 int n, m, sx, sy, ex, ey;
 char mp[MAX_N][MAX_N];
-int dang[MAX_N][MAX_N], ans = 0;
+int dang[MAX_N][MAX_N];
 bool vis[MAX_N][MAX_N];
-void dfs(int x, int y, int acc)
+bool check(int mid)
 {
-    if (ans > acc)
-        return;
-    if (x > n || y > m || x < 1 || y < 1)
-        return;
-    acc = min(acc, dang[x][y]);
-    vis[x][y] = true;
-    if (x == ex && y == ey)
+    memset(vis, 0, sizeof(vis));
+    queue<int> qx, qy;
+    qx.push(sx), qy.push(sy);
+    if (mid == 0)
+        return true;
+    if (dang[sx][sy] < mid)
+        return false;
+    while (!qx.empty())
     {
-        ans = max(acc, ans), vis[x][y] = false;
-        return;
+        int x = qx.front(), y = qy.front();
+        qx.pop(), qy.pop();
+        vis[x][y] = true;
+        if (x == ex && y == ey)
+            return true;
+        if (x > n || y > m || x < 1 || y < 1)
+            continue;
+        for (int i = 0; i < 4; i++)
+        {
+            int dstx = x + dirx[i], dsty = y + diry[i];
+            if (dang[dstx][dsty] < mid || dstx > n || dsty > m || dstx < 1 || dsty < 1 || vis[dstx][dsty])
+                continue;
+            qx.push(dstx), qy.push(dsty);
+        }
     }
-    int tx, ty, key = -1;
-    for (int i = 0; i < 4; i++)
-    {
-        int dstx = x + dirx[i], dsty = y + diry[i];
-        if (dang[dstx][dsty] > key && !vis[dstx][dsty] && !((dstx > n || dsty > m || dstx < 1 || dsty < 1)))
-            tx = dstx, ty = dsty, key = dang[dstx][dsty];
-    }
-    if (key != -1)
-        dfs(tx, ty, acc);
-    for (int i = 0; i < 4; i++)
-    {
-        int dstx = x + dirx[i], dsty = y + diry[i];
-        if (dstx != tx && dsty != ty && !vis[dstx][dsty] && !((dstx > n || dsty > m || dstx < 1 || dsty < 1)))
-            dfs(dstx, dsty, acc);
-    }
-    vis[x][y] = false;
+    return false;
 }
 int main()
 {
@@ -53,20 +51,26 @@ int main()
                 ex = i, ey = j;
     while (!qx.empty())
     {
-        int x = qx.front(), y = qy.front(), z = qd.front();
+        int x = qx.front(), y = qy.front(), d = qd.front();
         qx.pop(), qy.pop(), qd.pop();
-        if (dang[x][y] < z || (x > n || y > m || x < 1 || y < 1))
-            continue;
-        dang[x][y] = z;
+        vis[x][y] = true;
+        dang[x][y] = d;
         for (int i = 0; i < 4; i++)
         {
             int dstx = x + dirx[i], dsty = y + diry[i];
-            if (dstx > n || dsty > m || dstx < 1 || dsty < 1)
-                continue;
-            qx.push(dstx), qy.push(dsty), qd.push(z + 1);
+            if (dstx > 0 && dsty > 0 && dstx <= n && dsty <= m && !vis[dstx][dsty])
+                qx.push(dstx), qy.push(dsty), qd.push(d + 1);
         }
     }
-    dfs(sx, sy, INF);
+    int l = 0, r = 50, ans;
+    while (l <= r)
+    {
+        int mid = (l + r) >> 1;
+        if (check(mid))
+            l = mid + 1, ans = mid;
+        else
+            r = mid - 1;
+    }
     printf("%d", ans);
     return 0;
 }

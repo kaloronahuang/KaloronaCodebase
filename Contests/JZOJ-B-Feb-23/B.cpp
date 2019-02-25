@@ -1,87 +1,75 @@
 // B.cpp
+// require C++ 11;
+// --req-c++11
 #include <bits/stdc++.h>
 #define pr pair<int, int>
+#define ll long long
 using namespace std;
-int n, m, arr[20], tmpx, tmpy;
-struct edge
+ll n, m, arr[20], arr1[20], ans = 0x3f3f3f3f;
+pair<int, int> rules[70];
+unordered_map<ll, ll> mp1, mp2;
+ll gen(ll *ar)
 {
-    int to, nxt, weight;
-};
-struct graph
-{
-    int head[20], current, dist[20][20], tot, loops[20];
-    edge edges[20 * 19 / 2 + 200];
-    bool vis[20];
-    graph() { memset(head, -1, sizeof(head)); }
-    void addpath(int src, int dst, int weight)
-    {
-        edges[current].to = dst, edges[current].nxt = head[src];
-        edges[current].weight = weight, head[src] = current++;
-    }
-    void dijisktra(int u)
-    {
-        memset(dist[u], 0x3f, sizeof(dist[u]));
-        memset(vis, false, sizeof(vis));
-        priority_queue<pr> pq;
-        pq.push(make_pair(0, u));
-        dist[u][u] = 0;
-        while (!pq.empty())
-        {
-            int curt = pq.top().second;
-            pq.pop();
-            if (vis[curt])
-                continue;
-            for (int i = head[curt]; i != -1; i = edges[i].nxt)
-                if (dist[u][edges[i].to] > dist[u][curt] + edges[i].weight)
-                    dist[u][edges[i].to] = dist[u][curt] + edges[i].weight, pq.push(make_pair(-dist[u][edges[i].to], edges[i].to));
-        }
-    }
-    void getShortest()
-    {
-        for (int i = 1; i <= n; i++)
-            dijisktra(i);
-    }
-    int dfs(int u, int fa, int di)
-    {
-        vis[u] = true;
-        for (int i = head[u]; i != -1; i = edges[i].nxt)
-            if (edges[i].to == u)
-                return 1;
-        for (int i = head[u]; i != -1; i = edges[i].nxt)
-            if (edges[i].to != fa)
-                return dfs(edges[i].to, u, edges[i].weight) + edges[i].weight;
-        return di;
-    }
-    void getLoop()
-    {
-        memset(vis, false, sizeof(vis));
-        for (int i = 1; i <= n; i++)
-            if (!vis[i])
-                loops[++tot] = dfs(i, 0, 0);
-    }
-} A, B;
-
+    ll ans = 0;
+    for (int i = n; i >= 1; i--)
+        ans <<= 4, ans |= ar[i];
+    return ans;
+}
 int main()
 {
-    scanf("%d%d", &n, &m);
+    scanf("%lld%lld", &n, &m);
     for (int i = 1; i <= n; i++)
-        scanf("%d", &arr[i]);
+        scanf("%lld", &arr[i]), arr1[i] = i;
     for (int i = 1; i <= m; i++)
+        scanf("%lld%lld", &rules[i].first, &rules[i].second);
+    queue<ll> aq, bq;
+    aq.push(gen(arr)), bq.push(gen(arr1));
+    if (gen(arr) == gen(arr1))
+        puts(0), exit(0);
+    mp1[gen(arr)] = 0, mp2[gen(arr1)] = 0;
+    while (!aq.empty() && !bq.empty())
     {
-        scanf("%d%d", &tmpx, &tmpy);
-        if (tmpx == tmpy)
+        ll stat = aq.front(), step = mp1[stat];
+        if (step > ans)
             continue;
-        A.addpath(tmpx, tmpy, 1), A.addpath(tmpy, tmpx, 1);
+        aq.pop();
+        for (int i = 1; i <= m; i++)
+        {
+            ll stat1 = stat;
+            ll x = rules[i].first, y = rules[i].second, cod = (1 << 4) - 1;
+            ll xcode = (stat1 >> ((x - 1) << 2)) & cod, ycode = (stat1 >> ((y - 1) << 2)) & cod;
+            stat1 ^= (xcode << ((x - 1) << 2)), stat1 ^= (ycode << ((y - 1) << 2));
+            stat1 |= (ycode << ((x - 1) << 2)), stat1 |= (xcode << ((y - 1) << 2));
+            if (mp1.count(stat1) != 0)
+                continue;
+            if (mp2.count(stat1) != 0)
+            {
+                printf("%lld", mp2[stat1] + step + 1);
+                return 0;
+            }
+            mp1[stat1] = step + 1;
+            aq.push(stat1);
+        }
+        stat = bq.front(), step = mp2[stat];
+        bq.pop();
+        for (int i = 1; i <= m; i++)
+        {
+            ll stat1 = stat;
+            ll x = rules[i].first, y = rules[i].second, cod = (1 << 4) - 1;
+            ll xcode = (stat1 >> ((x - 1) << 2)) & cod, ycode = (stat1 >> ((y - 1) << 2)) & cod;
+            stat1 ^= (xcode << ((x - 1) << 2)), stat1 ^= (ycode << ((y - 1) << 2));
+            stat1 |= (ycode << ((x - 1) << 2)), stat1 |= (xcode << ((y - 1) << 2));
+            if (mp2.count(stat1) != 0)
+                continue;
+            if (mp1.count(stat1) != 0)
+            {
+                printf("%lld", mp1[stat1] + step + 1);
+                return 0;
+            }
+            mp2[stat1] = step + 1;
+            bq.push(stat1);
+        }
     }
-    A.getShortest();
-    for (int i = 1; i <= n; i++)
-    {
-        B.addpath(arr[i], i, max(A.dist[i][arr[i]], 1)), B.addpath(i, arr[i], max(A.dist[i][arr[i]], 1));
-    }
-    B.getLoop();
-    int ans = 0;
-    for (int i = 1; i <= B.tot; i++)
-        ans += B.loops[i] - 1;
-    printf("%d", ans);
+    printf("%lld", ans);
     return 0;
 }

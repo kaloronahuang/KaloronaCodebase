@@ -1,33 +1,33 @@
 // A.cpp
 #include <bits/stdc++.h>
 using namespace std;
-const int MAX_N = 100220;
-int n, seqA[MAX_N], seqB[MAX_N], tmp[MAX_N];
-void merge_units(int *seq, int cur)
-{
-    int f1 = 1, f2 = cur, tot = 0;
-    while (f1 < cur && f2 == cur)
-        if (seq[f1] < seq[f2])
-            tmp[++tot] = seq[f1], f1++;
-        else
-            tmp[++tot] = seq[f2], f2++;
-    while (f1 < cur)
-        tmp[++tot] = seq[f1], f1++;
-    while (f2 == cur)
-        tmp[++tot] = seq[f2], f2++;
-    for (int i = 1; i <= cur; i++)
-        seq[i] = tmp[i];
-}
+const int MAX_N = 110;
+int n, seqA[MAX_N], seqB[MAX_N], tmp[MAX_N], ca[MAX_N], cb[MAX_N];
 int main()
 {
     scanf("%d", &n);
     for (int i = 1; i <= n; i++)
     {
-        scanf("%d%d", &seqA[i], &seqB[i]);
-        merge_units(seqA, i), merge_units(seqB, i);
+        int a, b;
+        scanf("%d%d", &a, &b);
+        seqA[a]++, seqB[b]++;
+        memcpy(ca, seqA, sizeof(seqA)), memcpy(cb, seqB, sizeof(seqB));
+        int cur1 = 100, cur2 = 1;
         int ans = 0;
-        for (int j = 1; j <= i; j++)
-            ans = max(seqA[j] + seqB[i - j + 1], ans);
+        while (cur1 < 101 && cur2 > 0)
+        {
+            while (ca[cur1] == 0 && cur1 > 0)
+                cur1--;
+            while (cb[cur2] == 0 && cur2 < 101)
+                cur2++;
+            if (cur1 == 0 || cur2 == 101)
+                break;
+            ans = max(ans, cur1 + cur2);
+            if (ca[cur1] > cb[cur2])
+                ca[cur1] -= cb[cur2], cb[cur2] = 0;
+            else
+                cb[cur2] -= ca[cur1], ca[cur1] = 0;
+        }
         printf("%d\n", ans);
     }
     return 0;
