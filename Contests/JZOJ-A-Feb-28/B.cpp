@@ -1,55 +1,103 @@
 // B.cpp
 #include <bits/stdc++.h>
 using namespace std;
-const int MAX_N = 1010, DOM = 1000;
-int ai[MAX_N], bi[MAX_N], n, ans = 0x3f3f3f3f, curt[MAX_N];
-bool bucket[MAX_N << 1];
-bool check()
+int ai[4], bi[4], n, tmpx;
+int jump(int &x, int &y, int k)
 {
-    for (int i = 1; i <= n; i++)
-        if (!bucket[bi[i] + DOM])
-            return false;
-    return true;
-}
-bool dfs(int tim)
-{
-    if (tim == 0 && check())
-        return true;
-    if (tim == 0)
-        return false;
-    for (int i = 1; i <= n; i++)
-        for (int j = 1; j <= n; j++)
-            if (i != j)
+    while (k)
+    {
+        if (x == y)
+            break;
+        if (x > y)
+        {
+            if (k < x / y)
             {
-                bool flag = true;
-                int dst = curt[j] * 2 - curt[i];
-                for (int k = 1; k <= n; k++)
-                    if (k != j && ((curt[i] <= dst && curt[k] < dst && curt[k] > curt[i]) || (dst <= curt[i] && curt[k] < curt[i] && dst < curt[k])))
-                    {
-                        flag = false;
-                        break;
-                    }
-                if (flag)
-                {
-                    int tmp = curt[i], pre = bucket[dst + DOM];
-                    curt[i] = dst, bucket[dst + DOM] = true;
-                    if (dfs(tim - 1))
-                        return true;
-                    bucket[dst + DOM] = pre, curt[i] = tmp;
-                }
+                x -= k * y;
+                break;
             }
-    return false;
+            k -= x / y;
+            if (x % y == 0)
+            {
+                x = y;
+                break;
+            }
+            x -= (x / y) * y;
+        }
+        else
+        {
+            if (k < y / x)
+            {
+                y -= k * x;
+                break;
+            }
+            k -= y / x;
+            if (y % x == 0)
+            {
+                y = x;
+                break;
+            }
+            y -= (y / x) * x;
+        }
+    }
+}
+int dep(int x, int y, int &root)
+{
+    int ans = 0, tmp;
+    root = x;
+    while (true)
+    {
+        if (x < y)
+            swap(x, y);
+        if (x % y == 0)
+        {
+            ans += x / y - 1, root = y;
+            break;
+        }
+        tmp = y, ans += x / y, y = x % y, x = tmp;
+    }
+    return ans;
+}
+int lca(int a1, int a2, int b1, int b2)
+{
+    int d1 = dep(a1, a2, tmpx), d2 = dep(b1, b2, tmpx);
+    if (d1 < d2)
+        swap(a1, b1), swap(a2, b2), swap(d1, d2);
+    int ans = 0;
+    for (int i = log2(d1 - d2); i >= 0; i--)
+    {
+        int l = a1, r = a2;
+        jump(l, r, (1 << i));
+        int now = dep(l, r, tmpx);
+        if (now >= d2)
+            d1 = now, a1 = l, a2 = r, ans += (1 << i);
+        if (now == d2)
+            break;
+    }
+    if (a1 == b1 && b2 == a2)
+        return ans;
+    for (int i = log2(d1); i >= 0; i--)
+    {
+        int l = a1, r = a2, x = b1, y = b2;
+        jump(l, r, 1 << i), jump(x, y, 1 << i);
+        if (l == x && r == y)
+            continue;
+        a1 = l, a2 = r, b1 = x, b2 = y, ans += 2 * (1 << i);
+    }
+    return ans + 2;
 }
 int main()
 {
     n = 3;
     for (int i = 1; i <= n; i++)
-        scanf("%d", &ai[i]), curt[i] = ai[i], bucket[ai[i] + DOM] = true;
+        scanf("%d", &ai[i]);
     for (int i = 1; i <= n; i++)
         scanf("%d", &bi[i]);
-    for (int i = 1; i <= 1000; i++)
-        if (dfs(i))
-            printf("YES\n%d", i), exit(0);
-    printf("NO");
+    sort(ai + 1, ai + 4), sort(bi + 1, bi + 4);
+    int a1 = ai[2] - ai[1], a2 = ai[3] - ai[2], rt1;
+    int b1 = bi[2] - bi[1], b2 = bi[3] - bi[2], rt2;
+    dep(a1, a2, rt1), dep(b1, b2, rt2);
+    if (rt1 != rt2)
+        printf("NO"), exit(0);
+    printf("YES\n%d", lca(a1, a2, b1, b2));
     return 0;
 }
