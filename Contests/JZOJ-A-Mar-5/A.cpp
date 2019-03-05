@@ -1,73 +1,65 @@
 // A.cpp
 #include <bits/stdc++.h>
-#define mid ((l + r) >> 1)
 #define ll long long
 using namespace std;
-const int MAX_N = 1e5 + 2000;
-struct node
+const int MAX_N = 1e6 + 2000;
+int n, m, arr[MAX_N], blockId[MAX_N];
+int currentId[MAX_N], bucket[MAX_N];
+ll cnt[MAX_N], leftBucket[MAX_N], answer, anses[MAX_N];
+struct query
 {
-    ll lson, rson, prefix;
-} nodes[MAX_N * 20];
-ll roots[MAX_N], tot, mapping[MAX_N], arr[MAX_N], n, m, utot;
-int build(int l, int r)
-{
-    int p = ++tot;
-    if (l == r)
+    int l, r, id;
+    bool operator<(const query &qu) const
     {
-        nodes[p].prefix = 0;
-        return p;
+        return blockId[l] < blockId[qu.l] ||
+               (blockId[l] == blockId[qu.l] && r < qu.r);
     }
-    nodes[p].lson = build(l, mid), nodes[p].rson = build(mid + 1, r);
-    nodes[p].prefix = 0;
-    return p;
-}
-int update(int l, int r, int previous, int qx, ll c)
+} queries[MAX_N];
+void update_left(int x, int f)
 {
-    int p = ++tot;
-    nodes[p].lson = nodes[previous].lson, nodes[p].rson = nodes[previous].rson;
-    nodes[p].prefix = nodes[previous].prefix + c;
-    if (l == r && l == qx)
-        return p;
-    if (qx <= mid)
-        nodes[p].lson = update(l, mid, nodes[previous].lson, qx, c);
-    else
-        nodes[p].rson = update(mid + 1, r, nodes[previous].rson, qx, c);
-    return p;
-}
-ll query(int ql, int qr, int l, int r, int p)
-{
-    if (ql <= l && r <= qr)
-        return nodes[p].prefix;
-    if (mid >= qr)
-        return query(ql, qr, l, mid, nodes[p].lson);
-    if (mid < ql)
-        return query(ql, qr, mid + 1, r, nodes[p].rson);
-    return query(ql, qr, l, mid, nodes[p].lson) + query(ql, qr, mid + 1, r, nodes[p].rson);
+    leftBucket[currentId[x]]++;
+    answer = max(answer, (leftBucket[currentId[x]] + cnt[currentId[x]]) * 1LL * arr[x]);
 }
 int main()
 {
     scanf("%d%d", &n, &m);
+    int siz = sqrt(n * 1.0);
     for (int i = 1; i <= n; i++)
-        scanf("%d", &arr[i]), mapping[i] = arr[i];
-    sort(mapping + 1, mapping + n + 1);
-    utot = unique(mapping + 1, mapping + 1 + n) - mapping;
-    roots[0] = build(1, n);
+        scanf("%d", &arr[i]), bucket[i] = arr[i], blockId[i] = (i - 1) / siz + 1;
+    sort(bucket + 1, bucket + 1 + n);
+    int buckTot = unique(bucket + 1, bucket + 1 + n) - bucket;
     for (int i = 1; i <= n; i++)
+        currentId[i] = lower_bound(bucket + 1, bucket + 1 + buckTot, arr[i]) - bucket;
+    for (int i = 1; i <= m; i++)
+        scanf("%d%d", &queries[i].l, &queries[i].r), queries[i].id = i;
+    sort(queries + 1, queries + 1 + m);
+    int L = 1, R = 0, tmd;
+    ll tmp = 0;
+    answer = 0;
+    queries[0].l = 0, blockId[0] = 0;
+    for (int i = 1; i <= m; i++)
     {
-        ll val = arr[i], id = lower_bound(mapping + 1, mapping + 1 + utot, val) - mapping;
-        roots[i] = update(1, n, roots[i - 1], id, 1);
-    }
-    while (m--)
-    {
-        int l, r;
-        scanf("%d%d", &l, &r);
-        ll ans = 0;
-        for (int i = l; i <= r; i++)
+        if (blockId[queries[i - 1].l] != blockId[queries[i].l])
         {
-            ll num = arr[i], id = lower_bound(mapping + 1, mapping + 1 + utot, num) - mapping;
-            ans = max(ans, num * (query(id, id, 1, n, roots[r]) - query(id, id, 1, n, roots[l - 1])));
+            memset(cnt, 0, sizeof(cnt));
+            R = tmd = blockId[queries[i].l] * siz;
+            answer = tmp = 0;
         }
-        printf("%lld\n", ans);
+        L = min(tmd + 1, queries[i].r + 1);
+        while (L > queries[i].l)
+            update_left(--L, 1);
+        while (R < queries[i].r)
+        {
+            R++;
+            tmp = max((++cnt[currentId[R]]) * 1LL * arr[R], tmp);
+            answer = max(answer, (cnt[currentId[R]] + leftBucket[currentId[R]]) * 1LL * arr[R]);
+        }
+        anses[queries[i].id] = answer;
+        for (int j = L; j <= queries[i].r && j <= tmd; j++)
+            leftBucket[currentId[j]]--;
+        answer = tmp;
     }
+    for (int i = 1; i <= m; i++)
+        printf("%lld\n", anses[i]);
     return 0;
 }

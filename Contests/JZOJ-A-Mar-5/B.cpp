@@ -2,7 +2,8 @@
 #include <bits/stdc++.h>
 #define ll long long
 using namespace std;
-const int MAX_N = 502000;
+const int MAX_N = 602000;
+extern int theMain(void) __asm__("theMain");
 int head[MAX_N << 1], current, n, m, dfn[MAX_N], low[MAX_N], aff[MAX_N];
 int tot, stk[MAX_N], cur, afftot, indeg[MAX_N << 1], tmpx, tmpy, s;
 ll cnt[MAX_N << 1], dp[MAX_N << 1], answer;
@@ -45,12 +46,11 @@ void toposort()
         for (int i = head[u]; i != -1; i = edges[i].nxt)
         {
             dp[edges[i].to] = max(dp[edges[i].to], dp[u] + cnt[edges[i].to]);
-            if ((--indeg[edges[i].to]) == 0)
-                q.push(edges[i].to);
+            q.push(edges[i].to);
         }
     }
 }
-int main()
+int theMain()
 {
     memset(head, -1, sizeof(head));
     scanf("%d%d", &n, &m);
@@ -73,9 +73,19 @@ int main()
     for (int i = 1; i <= tmpx; i++)
         scanf("%d", &tmpy), mark[aff[tmpy]] = true;
     toposort();
-    for (int i = n + 1; i <= afftot; i++)
-        if (mark[i])
-            answer = max(answer, dp[i]);
+    for (int i = 1; i <= n; i++)
+        if (mark[aff[i]])
+            answer = max(answer, dp[aff[i]]);
     printf("%lld", answer);
+    return 0;
+}
+
+int main()
+{
+    int size = 64 << 20;
+    char *p = (char *)malloc(size) + size;
+    __asm__ __volatile__("movq  %0, %%rsp\n"
+                         "pushq $exit\n"
+                         "jmp theMain\n" ::"r"(p));
     return 0;
 }

@@ -2,30 +2,27 @@
 #include <bits/stdc++.h>
 #define ll long long
 using namespace std;
-const int MAX_N = 102000;
-ll n, l, w;
-struct node
+const int MAX_N = 101000;
+ll n, l, w, pos[MAX_N], prefix[MAX_N], answer;
+bool validiate(int l, int r)
 {
-    ll pos, cost;
-    bool operator<(const node &nd) const { return pos < nd.pos; }
-} nodes[MAX_N];
-bool cmp(const node &n1, const node &n2) { return n1.cost < n2.cost; }
+    int mid = (l + r) >> 1;
+    ll ans = pos[mid] * (mid - l + 1) - (prefix[mid] - prefix[l - 1]) + (prefix[r] - prefix[mid]) - pos[mid] * (r - mid);
+    return ans <= w;
+}
 int main()
 {
     scanf("%lld%lld%lld", &n, &l, &w);
     for (int i = 1; i <= n; i++)
-        scanf("%lld", &nodes[i].pos);
-    sort(nodes + 1, nodes + 1 + n);
-    int ans = nodes[n >> 1].pos;
-    for (int i = 1; i <= n; i++)
-        nodes[i].cost = abs(nodes[i].pos - ans);
-    sort(nodes + 1, nodes + 1 + n, cmp);
-    ans = 0;
-    for (int i = 1; i <= n; i++)
-        if (w >= nodes[i].cost)
-            w -= nodes[i].cost, ans++;
-        else
-            break;
-    printf("%lld", ans);
+        scanf("%lld", &pos[i]), prefix[i] = prefix[i - 1] + pos[i];
+    ll lcur = 1, rcur = 0;
+    while (rcur < n && lcur <= n)
+    {
+        rcur++;
+        while (lcur <= rcur && !validiate(lcur, rcur))
+            lcur++;
+        answer = max(rcur - lcur + 1, answer);
+    }
+    printf("%lld", answer);
     return 0;
 }
