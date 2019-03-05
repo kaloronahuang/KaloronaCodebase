@@ -15,7 +15,7 @@ struct query
                (blockId[l] == blockId[qu.l] && r < qu.r);
     }
 } queries[MAX_N];
-void update_left(int x, int f)
+void update_left(int x)
 {
     leftBucket[currentId[x]]++;
     answer = max(answer, (leftBucket[currentId[x]] + cnt[currentId[x]]) * 1LL * arr[x]);
@@ -47,7 +47,7 @@ int main()
         }
         L = min(tmd + 1, queries[i].r + 1);
         while (L > queries[i].l)
-            update_left(--L, 1);
+            update_left(--L);
         while (R < queries[i].r)
         {
             R++;
