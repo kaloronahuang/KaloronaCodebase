@@ -1,4 +1,5 @@
 #ignore following files:
+/.vscode/ipch
 /Docs
 *.exe
 *.out
