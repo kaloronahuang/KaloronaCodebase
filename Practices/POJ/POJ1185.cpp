@@ -1,70 +1,58 @@
 // POJ1185.cpp
-#include <bits/stdc++.h>
+#include <iostream>
+#include <cstdio>
 using namespace std;
-const int MAX_N = 110, RANGE = 1 << 10;
-int n, m, dp[MAX_N][RANGE], terrian[MAX_N];
-int dfs(int curt, int stat)
+int n, m, ans, dp[(1 << 10)][(1 << 10)][3], a[105], sum[(1 << 10)];
+char str[20];
+int getsum(int S)
 {
-    int &ans = dp[curt][stat];
-    if(curt == 0)
-        return ans = 0;
-    if (ans != -1)
-        return ans;
-    ans = 0;
-    for (int i = 0; i < m; i++)
+    int tot = 0;
+    while (S)
     {
-        int curtBit = (stat >> (i << 1)) & 3;
-        if (curtBit == 2 && ((terrian[curt] >> i) & 1) != 1)
-            return (ans = 0);
+        if (S & 1)
+            tot++;
+        S >>= 1;
     }
-    for (int prev_stat = 0; prev_stat < (1 << (m << 1)); prev_stat++)
-    {
-        int cnt = 0;
-        bool flag = true;
-        for (int i = 0; i < m; i++)
-        {
-            int curtBit = (stat >> (i << 1)) & 3, prevBit = (prev_stat >> (i << 1)) & 3;
-            if(curtBit == 2 && prevBit != 0)
-            {
-                flag = false;
-                break;
-            }
-            if(curtBit == 1 && prevBit != 2)
-            {
-                flag = false;
-                break;
-            }
-            if(curtBit == 0 && prevBit == 2)
-            {
-                flag = false;
-                break;
-            }
-            if (curtBit == 2)
-                cnt++;
-        }
-        if (!flag)
-            continue;
-        ans = max(ans, dfs(curt - 1, prev_stat) + cnt);
-    }
-    return ans;
+    return tot;
 }
 int main()
 {
-    // input;
-    memset(dp, -1, sizeof(dp));
     scanf("%d%d", &n, &m);
-    terrian[0] = (1 << m) - 1;
-    for (int i = 1; i <= n; i++)
+    for (int i = 0; i < n; i++)
+    {
+        scanf("%s", str);
         for (int j = 0; j < m; j++)
+            a[i] <<= 1, a[i] += (str[j] == 'H' ? 1 : 0);
+    }
+    for (int i = 0; i < (1 << m); i++)
+        sum[i] = getsum(i);
+    for (int S = 0; S < (1 << m); S++)
+        if (!(S & a[0] || (S & (S << 1)) || (S & (S << 2))))
+            dp[0][S][0] = sum[S];
+    for (int L = 0; L < (1 << m); L++)
+        for (int S = 0; S < (1 << m); S++)
+            if (!(L & S || L & a[0] || S & a[1] || (L & (L << 1)) || (L & (L << 2)) || (S & (S << 1)) || (S & (S << 2))))
+                dp[L][S][1] = sum[S] + sum[L];
+    for (int i = 2; i < n; i++)
+        for (int L = 0; L < (1 << m); L++)
         {
-            char ch;
-            scanf("%c", &ch);
-            if (ch == 'P')
-                terrian[i] |= (1 << j);
+            if (L & a[i - 1] || (L & (L << 1)) || (L & (L << 2)))
+                continue;
+            for (int S = 0; S < (1 << m); S++)
+            {
+                if (S & a[i] || L & S || (S & (S << 1)) || (S & (S << 2)))
+                    continue;
+                for (int FL = 0; FL < (1 << m); FL++)
+                {
+                    if (FL & L || FL & S || FL & a[i - 2] || (FL & (FL << 1)) || (FL & (FL << 2)))
+                        continue;
+                    dp[L][S][i % 3] = max(dp[L][S][i % 3], dp[FL][L][(i - 1) % 3] + sum[S]);
+                }
+            }
         }
-    int ans = 0;
-    for (int i = 0; i < (1 << (n << 1)); i++)
-        ans = max(ans, dfs(n, i));
+    for (int L = 0; L < (1 << m); L++)
+        for (int S = 0; S < (1 << m); S++)
+            ans = max(ans, dp[L][S][(n - 1) % 3]);
     printf("%d", ans);
     return 0;
 }
