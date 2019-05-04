@@ -5,3 +5,5 @@
 *.out
 input
 *.in
+*.DS_Store
+*.plist
