@@ -6,4 +6,4 @@
 input
 *.in
 *.DS_Store
-*.plist
+*.out.dSYM/

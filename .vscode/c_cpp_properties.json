@@ -30,7 +30,7 @@
             "includePath": [
                 "/usr/local/include/c++/8.3.0/**"
             ],
-            "compilerPath": "/usr/bin/g++-8",
+            "compilerPath": "/usr/local/bin/g++-8",
             "cppStandard": "c++11",
             "intelliSenseMode": "clang-x64"
         }
