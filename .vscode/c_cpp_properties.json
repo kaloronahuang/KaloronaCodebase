@@ -23,10 +23,10 @@
             "compilerPath": "C:/Program Files (x86)/Dev-Cpp/MinGW64/bin/g++.exe",
             "cStandard": "c11",
             "cppStandard": "c++11",
-            "intelliSenseMode": "gcc-x64"
+            "intelliSenseMode": "clang-x64"
         },
         {
-            "name" : "macOS",
+            "name": "macOS",
             "includePath": [
                 "/usr/local/include/c++/8.3.0/**"
             ],
