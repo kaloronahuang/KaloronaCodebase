@@ -67,6 +67,6 @@
 	},
 	"editor.fontSize": 16,
 	"editor.fontFamily": "Consolas, 'Courier New', monospace",
-	"C_Cpp.intelliSenseEngineFallback": "Enabled",
+	"C_Cpp.intelliSenseEngineFallback": "Disabled",
 	"python.pythonPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Anaconda3_64\\python.exe"
 }
