@@ -63,7 +63,12 @@
 		"memory": "cpp",
 		"optional": "cpp",
 		"shared_mutex": "cpp",
-		"string_view": "cpp"
+		"string_view": "cpp",
+		"charconv": "cpp",
+		"iterator": "cpp",
+		"memory_resource": "cpp",
+		"random": "cpp",
+		"regex": "cpp"
 	},
 	"editor.fontSize": 16,
 	"editor.fontFamily": "Consolas, 'Courier New', monospace",
