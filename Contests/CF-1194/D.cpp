@@ -12,14 +12,19 @@ int main()
     while (T--)
     {
         scanf("%lld%lld", &n, &k);
-        ll num = 6;
-        k -= 2;
-        while (k > 3)
-            k >>= 1, num <<= 1;
-        if (n % num == 0)
-            puts("Bob");
+        bool win = true;
+        if (k % 3 == 0)
+        {
+            int np = n % (k + 1);
+            if (np % 3 == 0 && np != k)
+                win = false;
+        }
         else
-            puts("Alice");
+        {
+            if (n % 3 == 0)
+                win = false;
+        }
+        puts(win ? "Alice" : "Bob");
     }
     return 0;
 }
