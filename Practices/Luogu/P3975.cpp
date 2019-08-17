@@ -116,7 +116,7 @@ int main()
     n = strlen(str + 1);
     for (int i = 1; i <= n; i++)
         insert(str[i] - 'a');
-    for (int i = 2; i <= n; i++)
+    for (int i = 2; i <= tot; i++)
         addpath(nodes[i].link, i);
     dfs_right(1);
     rgt[1] = 0;
