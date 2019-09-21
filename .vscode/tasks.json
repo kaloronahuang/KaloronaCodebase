@@ -37,7 +37,8 @@
                 "\"${file}\"",
                 "-o",
                 "\"${fileDirname}\\${fileBasenameNoExtension}.exe\"",
-                "-g"
+                "-g",
+                "-Wall"
             ],
             "type": "shell",
             "group": "build",
