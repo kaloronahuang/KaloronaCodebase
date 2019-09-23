@@ -68,7 +68,9 @@
 		"iterator": "cpp",
 		"memory_resource": "cpp",
 		"random": "cpp",
-		"regex": "cpp"
+		"regex": "cpp",
+		"map": "cpp",
+		"set": "cpp"
 	},
 	"editor.fontSize": 16,
 	"editor.fontFamily": "Consolas, 'Courier New', monospace",
