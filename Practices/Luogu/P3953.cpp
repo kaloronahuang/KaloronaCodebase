@@ -1,64 +1,84 @@
 // P3953.cpp
-#include <iostream>
-#include <cstring>
-#include <queue>
+#include <bits/stdc++.h>
+#define ll long long
+#define pr pair<ll, int>
 
 using namespace std;
 
-typedef unsigned long long ll;
+const int MAX_N = 100100, MAX_E = 200010;
 
-int points[100000];
-int sides[200000];
-int degrees[200000];
-int next[200000];
-int stackPos = 0;
+int head[MAX_N], n, m, k, p, current, T;
+ll dist[MAX_N], dp[MAX_N][60];
+bool vis[MAX_N], inst[MAX_N][60];
 
-int startPos = 1;
-int endPos;
-int N,M,K,P;
-
-void init()
+struct edge
 {
-	memset(points,-1,sizeof(points));
-	memset(sides,-1,sizeof(sides));
-	memset(degrees,-1,sizeof(degrees));
-	memset(next,-1,sizeof(next));
+	int to, nxt;
+	ll weight;
+	bool tag;
+} edges[MAX_E << 1];
+
+void addpath(int src, int dst, ll weight, bool toggle)
+{
+	edges[current].to = dst, edges[current].nxt = head[src];
+	edges[current].tag = toggle, edges[current].weight = weight;
+	head[src] = current++;
 }
 
-void buildMap()
+void shortest_path()
 {
-	cin>>N>>M>>K>>P;
-	endPos = N;
-	for(int i = 0;i<M;i++)
+	memset(dist, 0x3f, sizeof(dist));
+	memset(vis, false, sizeof(vis));
+	priority_queue<pr> pq;
+	pq.push(make_pair(0, n)), dist[n] = 0;
+	while (!pq.empty())
 	{
-		int a,b,c;
-		cin>>a>>b>>c;
-		int lastSide = points[a];
-		sides[stackPos] = b;
-		degrees[stackPos] = c;
-		next[stackPos] = lastSide;
-		points[a] = stackPos;
-		stackPos++;
+		int u = pq.top().second;
+		pq.pop();
+		if (vis[u])
+			continue;
+		vis[u] = true;
+		for (int i = head[u]; i != -1; i = edges[i].nxt)
+			if (edges[i].tag == true && dist[edges[i].to] > dist[u] + edges[i].weight)
+				dist[edges[i].to] = dist[u] + edges[i].weight, pq.push(make_pair(-dist[edges[i].to], edges[i].to));
 	}
 }
 
-void getShortestPath()
+int dfs(int u, int addition)
 {
-	ll p_arr[N+1];
-	memset(p_arr,1000000000,sizeof(p_arr));
-	queue<int> pointAwaiting
-	pointAwaiting.push(1);
-	while(!pointAwaiting.empty())
-	{
-		int pNum = pointAwaiting.size();
-		for(int i = 0;i<pNum;i++)
+	if (inst[u][addition])
+		return -1;
+	if (dp[u][addition])
+		return dp[u][addition];
+	inst[u][addition] = true;
+	if (u == n)
+		dp[u][addition] = 1;
+	for (int i = head[u]; i != -1; i = edges[i].nxt)
+		if (dist[edges[i].to] - dist[u] + edges[i].weight <= addition && edges[i].tag == true)
 		{
-			
+			ll diff = dist[edges[i].to] - dist[u] + edges[i].weight;
+			if (dfs(edges[i].to, addition - diff) == -1)
+				return (dp[u][addition] = -1);
+			dp[u][addition] = (1LL * dp[u][addition] + 1LL * dp[edges[i].to][addition - diff]) % p;
 		}
-	}
+	inst[u][addition] = false;
+	return dp[u][addition];
 }
 
 int main()
 {
+	scanf("%d", &T);
+	while (T--)
+	{
+		memset(head, -1, sizeof(head)), current = 0;
+		memset(inst, 0, sizeof(inst)), memset(dp, 0, sizeof(dp));
+		scanf("%d%d%d%d", &n, &m, &k, &p);
+		for (int i = 1, u, v, w; i <= m; i++)
+			scanf("%d%d%d", &u, &v, &w), addpath(u, v, w, false), addpath(v, u, w, true);
+		shortest_path();
+		for (int i = 0; i < current; i++)
+			edges[i].tag ^= 1;
+		printf("%d\n", dfs(1, k));
+	}
 	return 0;
 }
