@@ -1,50 +1,54 @@
 // P2657.cpp
-#include <iostream>
-#include <sstream>
+#include <bits/stdc++.h>
+
 using namespace std;
 
-const int maxn = 10;
-#define ll long long
-ll dp[maxn][maxn];
-int limit = 10;
+int dp[15][15], digits[15];
 
-void genDP()
+void preprocess()
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i <= 9; i++)
         dp[1][i] = 1;
-    for (int i = 2; i <= limit; i++)
-        for (int j = 0; j < 10; j++)
-            for (int k = 0; k < 10; k++)
-                if (abs(j - k) >= 0)
+    for (int i = 2; i <= 10; i++)
+        for (int j = 0; j <= 9; j++)
+            for (int k = 0; k <= 9; k++)
+                if (abs(j - k) >= 2)
                     dp[i][j] += dp[i - 1][k];
 }
 
-string toString(int num)
+// Worth to be noticed;
+int solve(int x)
 {
-    stringstream ss;
-    ss << num;
-    return ss.str();
-}
-
-int solve(int l)
-{
-    string str = toString(l);
-    int siz = str.length();
-    int ans = 0;
-    for (int i = 0; i < siz; i++)
+    memset(digits, 0, sizeof(digits));
+    int len = 0, ans = 0;
+    // Split;
+    while (x)
+        digits[++len] = x % 10, x /= 10;
+    // Find the solution numbers within (len - 1);
+    for (int i = 1; i <= len - 1; i++)
+        for (int j = 1; j <= 9; j++)
+            ans += dp[i][j];
+    // Get the sol from numbers with lower head;
+    for (int i = 1; i < digits[len]; i++)
+        ans += dp[len][i];
+    // Get the sol from numbers with identical head;
+    for (int i = len - 1; i >= 1; i--)
     {
-        int digit = siz - i;
-        for (int j = 1; j <= str[i] - '0'; j++)
-            ans += dp[digit][j];
+        // we attempt to make the previous "heads" identical;
+        for (int j = 0; j <= digits[i] - 1; j++)
+            if (abs(j - digits[i + 1]) >= 2)
+                ans += dp[i][j];
+        // same prefix judge:
+        if (abs(digits[i] - digits[i + 1]) < 2)
+            break;
     }
     return ans;
 }
 
 int main()
 {
+    preprocess();
     int l, r;
-    cin >> l >> r;
-    genDP();
-    cout << solve(r + 1) - solve(l);
+    scanf("%d%d", &l, &r), printf("%d", solve(r + 1) - solve(l));
     return 0;
 }
