@@ -28,28 +28,16 @@ int query(int x)
 int main()
 {
     scanf("%d", &n);
-    int mx = 0, id;
     for (int i = 1; i <= n; i++)
-    {
         scanf("%d", &seq[i]);
-        if (seq[i] > mx)
-            mx = seq[i], id = i;
-    }
     for (int i = 1; i <= n; i++)
-        if (i != id)
-            prefix[i] = prefix[i - 1] + ((i - 1) - query(seq[i])), update(seq[i], 1);
-        else
-            prefix[i] = prefix[i - 1];
+        prefix[i] = (i - 1 - query(seq[i])), update(seq[i], 1);
     memset(nodes, 0, sizeof(nodes));
     for (int i = n; i >= 1; i--)
-        if (i != id)
-            suffix[i] = suffix[i + 1] + ((n - i) - query(seq[i])), update(seq[i], 1);
-        else
-            suffix[i] = suffix[i + 1];
-    ll ans = prefix[id - 1] + suffix[id + 1];
-
-    for (int peak = 1; peak <= n + 1; peak++)
-        ans = min(ans, prefix[peak - 1] + suffix[peak]);
+        suffix[i] = (n - i - query(seq[i])), update(seq[i], 1);
+    ll ans = 0;
+    for (int peak = 1; peak <= n; peak++)
+        ans += min(prefix[peak], suffix[peak]);
     printf("%lld", ans);
     return 0;
 }
