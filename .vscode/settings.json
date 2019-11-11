@@ -74,6 +74,5 @@
 	},
 	"editor.fontSize": 16,
 	"editor.fontFamily": "'Cascadia Code', Consolas, 'Courier New', monospace",
-	"C_Cpp.intelliSenseEngineFallback": "Disabled",
 	"python.pythonPath": "/usr/local/bin/python3"
 }
