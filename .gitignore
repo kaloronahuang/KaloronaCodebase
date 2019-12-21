@@ -7,3 +7,4 @@ input
 *.in
 *.DS_Store
 *.out.dSYM/
+*.ans
