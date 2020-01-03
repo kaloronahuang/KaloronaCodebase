@@ -11,7 +11,7 @@ This is a repo containing all my codes about the OI (a kind of competitive progr
 - BZOJ aka lydsy (a OJ with bunches of problems)
 - Openjudge (a open judge site by Peking University)
 - AtCoder (an international site located in Japan with many great contests)
-- Quest OJ (the official online judge by The Attached Middle School Attached to Jiangxi Normal University)
+- Quest OJ (the official online judge by The Attached Middle School to Jiangxi Normal University)
 
 ## Contact & Issues
 
