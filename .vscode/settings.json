@@ -70,7 +70,8 @@
 		"random": "cpp",
 		"regex": "cpp",
 		"map": "cpp",
-		"set": "cpp"
+		"set": "cpp",
+		"rope": "cpp"
 	},
 	"editor.fontSize": 16,
 	"editor.fontFamily": "'Cascadia Code', Consolas, 'Courier New', monospace",
