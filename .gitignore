@@ -8,3 +8,4 @@ input
 *.DS_Store
 *.out.dSYM/
 *.ans
+*.icloud
