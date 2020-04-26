@@ -59,7 +59,8 @@
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}.out",
                 "-g",
-                "-Wall"
+                "-Wall",
+                "-std=c++98"
             ],
             "problemMatcher": {
                 "owner": "cpp",
