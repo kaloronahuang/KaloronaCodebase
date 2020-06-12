@@ -5,80 +5,83 @@ using namespace std;
 
 const int MAX_N = 5e5 + 200;
 
-int n, fa[MAX_N], head[MAX_N], current, siz[MAX_N], di[MAX_N], upper, nodes[MAX_N << 2];
+int n, fa[MAX_N], siz[MAX_N], di[MAX_N];
+int nodes[MAX_N << 2], tag[MAX_N << 2], ans[MAX_N], lptr[MAX_N];
 double splen;
-vector<int> mp;
-
-struct edge
-{
-	int to, nxt;
-} edges[MAX_N << 1];
-
-int ripe(int x) { return lower_bound(mp.begin(), mp.end(), x) - mp.begin() + 1; }
-
-void addpath(int src, int dst)
-{
-	edges[current].to = dst, edges[current].nxt = head[src];
-	head[src] = current++;
-}
-
-void dfs(int u)
-{
-	siz[u] = 1;
-	for (int i = head[u]; i != -1; i = edges[i].nxt)
-		dfs(edges[i].to), siz[u] += siz[edges[i].to];
-}
 
 #define lson (p << 1)
 #define rson ((p << 1) | 1)
 #define mid ((l + r) >> 1)
 
-void update(int qx, int l, int r, int p, int delta = 1)
+// SegmentTree;
+
+void pushup(int p) { nodes[p] = min(nodes[lson], nodes[rson]); }
+
+void pushdown(int p)
 {
-	nodes[p] += delta;
-	if (l == r)
-		return;
-	if (qx <= mid)
-		update(qx, l, mid, lson, delta);
-	else
-		update(qx, mid + 1, r, rson, delta);
+	if (tag[p])
+	{
+		tag[lson] += tag[p], tag[rson] += tag[p];
+		nodes[lson] += tag[p], nodes[rson] += tag[p];
+		tag[p] = 0;
+	}
 }
 
-int queryKth(int k, int l, int r, int p)
+void build(int l, int r, int p)
 {
 	if (l == r)
-		return l;
+		return (void)(nodes[p] = l);
+	build(l, mid, lson), build(mid + 1, r, rson);
+	pushup(p);
+}
+
+void update(int ql, int qr, int l, int r, int p, int val)
+{
+	if (ql <= l && r <= qr)
+		return (void)(nodes[p] += val, tag[p] += val);
+	pushdown(p);
+	if (ql <= mid)
+		update(ql, qr, l, mid, lson, val);
+	if (mid < qr)
+		update(ql, qr, mid + 1, r, rson, val);
+	pushup(p);
+}
+
+int query(int k, int l, int r, int p)
+{
+	if (l == r)
+		return l + (nodes[p] < k);
+	pushdown(p);
 	if (k <= nodes[rson])
-		return queryKth(k, mid + 1, r, rson);
+		return query(k, l, mid, lson);
 	else
-		return queryKth(k - nodes[rson], l, mid, lson);
-}
-
-vector<int> ans;
-
-void collect(int u)
-{
-	int pos = queryKth(siz[u], 0, upper, 1);
-	ans.push_back(pos), update(pos, 0, upper, 1, -1);
-	for (int i = head[u]; i != -1; i = edges[i].nxt)
-		collect(edges[i].to);
+		return query(k, mid + 1, r, rson);
 }
 
 int main()
 {
-	memset(head, -1, sizeof(head));
 	scanf("%d%lf", &n, &splen);
 	for (int i = 1; i <= n; i++)
-		scanf("%d", &di[i]), mp.push_back(di[i]);
+		scanf("%d", &di[i]);
 	for (int i = n; i >= 1; i--)
-		fa[i] = int(i / splen), addpath(fa[i], i);
-	dfs(0), sort(mp.begin(), mp.end()), mp.erase(unique(mp.begin(), mp.end()), mp.end());
-	upper = mp.size(), update(0, 0, upper, 1);
+		fa[i] = int(i / splen), siz[i] = 1;
+	for (int i = n; i >= 1; i--)
+		siz[fa[i]] += siz[i];
+	sort(di + 1, di + 1 + n), reverse(di + 1, di + 1 + n);
+	for (int i = n - 1; i >= 1; i--)
+		if (di[i] == di[i + 1])
+			lptr[i] = lptr[i + 1] + 1;
+	build(1, n, 1);
 	for (int i = 1; i <= n; i++)
-		di[i] = ripe(di[i]), update(di[i], 0, upper, 1);
-	collect(0);
+	{
+		if (fa[i] != fa[i - 1])
+			update(ans[fa[i]], n, 1, n, 1, siz[fa[i]] - 1);
+		int x = query(siz[i], 1, n, 1);
+		x += lptr[x], lptr[x]++, x -= lptr[x] - 1, ans[i] = x;
+		update(x, n, 1, n, 1, -siz[i]);
+	}
 	for (int i = 1; i <= n; i++)
-		printf("%d ", mp[ans[i] - 1]);
+		printf("%d ", di[ans[i]]);
 	puts("");
 	return 0;
 }
