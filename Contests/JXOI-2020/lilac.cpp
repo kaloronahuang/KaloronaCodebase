@@ -3,60 +3,87 @@
 
 using namespace std;
 
-const int MAX_N = 2550, MAX_M = MAX_N * (MAX_N - 1) / 2;
+const int MAX_N = 2520;
 
+typedef long long ll;
 typedef pair<int, int> pii;
 
-int n, m, mp[MAX_N][MAX_N], start_pos, ecnt, ui[MAX_M], vi[MAX_M];
+int n, m, start_pos, mem[MAX_N], siz[MAX_N], org_mem[MAX_N], org_siz[MAX_N], parity[MAX_N], op[MAX_N], deg[MAX_N];
+ll sum;
+bool vis[MAX_N];
+vector<pii> edges[MAX_N];
 
-void fileIO()
+int find(int x) { return mem[x] == x ? x : mem[x] = find(mem[x]); }
+
+void merge(int x, int y)
 {
-	freopen("lilac.in", "r", stdin);
-	freopen("lilac.out", "w", stdout);
+	x = find(x), y = find(y);
+	if (x == y)
+		return;
+	if (siz[x] < siz[y])
+		swap(x, y);
+	mem[y] = x, siz[x] += siz[y];
 }
 
-namespace Subtask1
+ll solve(int end_pos)
 {
-
-	const int MAX_P = 2e6 + 200;
-	
-	int dist[MAX_P];
-	bool vis[MAX_P];
-
-	int getId(int x, int stat) { return stat * n + x; }
-
-	int handler()
-	{
-		memset(dist, 0x3f, sizeof(dist));
-		dist[getId(start_pos, 0)] = 0;
-		for (int stat = 0; stat < (1 << m); stat++)
-		{
-			for (int i = 1; i <= n; i++)
-				for (int j = 1; j <= n; j++)
-					dist[getId(i, stat)] = min(dist[getId(i, stat)], dist[getId(j, stat)] + abs(i - j));
-			for (int i = 0; i < m; i++)
+	deg[end_pos]++;
+	memset(vis, false, sizeof(vis)), memcpy(mem, org_mem, sizeof(mem));
+	memcpy(siz, org_siz, sizeof(siz)), memcpy(parity, op, sizeof(op));
+	for (int i = 0; i <= n; i++)
+		edges[i].clear();
+	ll ans = sum;
+	parity[start_pos] ^= 1, parity[end_pos] ^= 1;
+	int last_ptr = 0, tot = 0;
+	for (int i = 1; i <= n; i++)
+		if (parity[i] == 1)
+			if (last_ptr)
 			{
-				int u = ui[i], v = vi[i];
-				dist[getId(u, stat | (1 << i))] = min(dist[getId(u, stat | (1 << i))], dist[getId(v, stat)] + abs(u - v));
-				swap(u, v);
-				dist[getId(u, stat | (1 << i))] = min(dist[getId(u, stat | (1 << i))], dist[getId(v, stat)] + abs(u - v));
+				for (int j = last_ptr; j < i; j++)
+					ans++, merge(j, j + 1);
+				last_ptr = 0;
 			}
-		}
-		for (int i = 1; i <= n; i++)
-			printf("%d ", dist[getId(i, (1 << m) - 1)]);
-		puts("");
-		return 0;
+			else
+				last_ptr = i;
+	for (int i = 1; i <= n; i++)
+		if (deg[i] && !vis[find(i)])
+			vis[find(i)] = true, tot++;
+	for (int i = 1, gx; i < n; i = gx)
+	{
+		gx = i + 1;
+		if (deg[i] == 0)
+			continue;
+		while (gx <= n && deg[gx] == 0)
+			gx++;
+		if (deg[gx])
+			edges[gx - i].push_back(make_pair(i, gx));
 	}
-
+	for (int i = 1; i < n && tot > 1; i++)
+		for (pii x : edges[i])
+			if (find(x.first) != find(x.second))
+			{
+				merge(x.first, x.second), tot--, ans += 2LL * i;
+				if (tot == 1)
+					break;
+			}
+	deg[end_pos]--;
+	return ans;
 }
 
 int main()
 {
-	fileIO();
-	memset(mp, -1, sizeof(mp));
-	scanf("%d%d%d", &n, &m, &start_pos);
+	scanf("%d%d%d", &n, &m, &start_pos), deg[start_pos] = 1;
+	for (int i = 1; i <= n; i++)
+		mem[i] = i, siz[i] = 1;
 	for (int i = 1, u, v; i <= m; i++)
-		scanf("%d%d", &u, &v), mp[u][v] = mp[v][u] = ecnt++, ui[i - 1] = u, vi[i - 1] = v;
-	return Subtask1::handler();
+	{
+		scanf("%d%d", &u, &v), sum += abs(u - v);
+		op[u] ^= 1, op[v] ^= 1, deg[u] = deg[v] = 1;
+		merge(u, v);
+	}
+	memcpy(org_mem, mem, sizeof(mem)), memcpy(org_siz, siz, sizeof(siz));
+	for (int end_pos = 1; end_pos <= n; end_pos++)
+		printf("%lld ", solve(end_pos));
+	puts("");
 	return 0;
 }
