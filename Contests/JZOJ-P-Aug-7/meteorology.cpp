@@ -5,8 +5,10 @@ using namespace std;
 
 const double pi = acos(-1.0);
 
+typedef long double ld;
+
 int T;
-double x_1, y_1, z_1, x_2, y_2, z_2, r, a, b, c, d;
+ld x_1, y_1, z_1, x_2, y_2, z_2, r, a, b, c, d;
 
 void fileIO(string str)
 {
@@ -14,28 +16,23 @@ void fileIO(string str)
     freopen((str + ".out").c_str(), "w", stdout);
 }
 
+ld pow2(ld x) { return x * x; }
+
+ld getDist(ld x1, ld y1, ld z1, ld x2, ld y2, ld z2) { return sqrt(pow2(x1 - x2) + pow2(y1 - y2) + pow2(z1 - z2)); }
+
+ld getPDist(ld x, ld y, ld z) { return abs(a * x + b * y + c * z + d) / sqrt(pow2(a) + pow2(b) + pow2(c)); }
+
 int main()
 {
     // fileIO("meteorology");
     scanf("%d", &T);
     while (T--)
     {
-        scanf("%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf", &x_1, &y_1, &z_1, &x_2, &y_2, &z_2, &r, &a, &b, &c, &d);
-        if (c != 0)
-        {
-            d /= c;
-            z_1 += d, z_2 += d;
-        }
-        if (z_1 >= z_2 + r)
-        {
-            double L = z_1 - z_2, cosTheta = r / L, sinTheta = sqrt(1.0 - cosTheta);
-            double little_part = cosTheta * r;
-            double cDist = L - little_part, cr = sqrt(r * r - little_part * little_part);
-            double ansR = cr / cDist * z_1;
-            printf("%.10lf\n", 1LL * pi * ansR * ansR);
-        }
-        else
-            puts("0");
+        scanf("%Lf%Lf%Lf%Lf%Lf%Lf%Lf%Lf%Lf%Lf%Lf", &x_1, &y_1, &z_1, &x_2, &y_2, &z_2, &r, &a, &b, &c, &d);
+        ld d1 = getPDist(x_1, y_1, z_1), d2 = getPDist(x_2, y_2, z_2), d3 = getDist(x_1, y_1, z_1, x_2, y_2, z_2);
+        ld theta = acos((d1 - d2) / d3), alpha = asin(r / d3), beta = asin(r / (d1 - d2));
+        ld r1 = d1 * (tan(theta + alpha) - tan(theta - alpha)) / 2.0, r2 = d1 * tan(beta);
+        printf("%.10Lf\n", pi * r1 * r2);
     }
     return 0;
 }
