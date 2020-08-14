@@ -80,14 +80,21 @@ int build(int l, int r)
 
 bool check(int x, int y, int z, int r) { return 1LL * x * x + 1LL * (y - z) * (y - z) <= 1LL * r * r; }
 
+ll pow2(ll bas) { return bas * bas; }
+
 bool check(int p, int z, int r)
 {
-    bool flag = true;
-    flag &= check(nodes[p].max_val[0], nodes[p].max_val[1], z, r);
-    flag &= check(nodes[p].min_val[0], nodes[p].min_val[1], z, r);
-    flag &= check(nodes[p].min_val[0], nodes[p].max_val[1], z, r);
-    flag &= check(nodes[p].max_val[0], nodes[p].min_val[1], z, r);
-    return flag;
+    return pow2(max(abs(1LL * nodes[p].max_val[0]), abs(1LL * nodes[p].min_val[0]))) + pow2(max(abs(nodes[p].max_val[1] - z), abs(nodes[p].min_val[1] - z))) <= 1LL * r * r;
+}
+
+ll bound(int l, int r, int x)
+{
+    if (l <= x && x <= r)
+        return 0;
+    if (x < l)
+        return 1LL * (l - x) * (l - x);
+    else
+        return 1LL * (x - r) * (x - r);
 }
 
 int query(int p, int z, int r)
@@ -96,27 +103,21 @@ int query(int p, int z, int r)
         return 0;
     if (check(p, z, r))
         return nodes[p].sum;
+    if (bound(nodes[p].min_val[0], nodes[p].max_val[0], 0) + bound(nodes[p].min_val[1], nodes[p].max_val[1], z) > 1LL * r * r)
+        return 0;
     int ret = 0;
     if (check(nodes[p].d[0], nodes[p].d[1], z, r))
         ret++;
     for (int c = 0; c < 2; c++)
         if (nodes[p].ch[c])
-        {
-            bool flag = false;
-            flag |= (nodes[p].min_val[1] > z + r);
-            flag |= (nodes[p].max_val[1] < z - r);
-            flag |= (nodes[p].min_val[0] > r);
-            flag |= (nodes[p].max_val[0] < -r);
-            if (!flag)
-                ret += query(nodes[p].ch[c], z, r);
-        }
+            ret += query(nodes[p].ch[c], z, r);
     return ret;
 }
 
 int main()
 {
     // freopen("ex_circle2.in", "r", stdin);
-    n = read(), q = read(), srand(time(NULL));
+    n = read(), q = read(), srand(time(NULL)), current_frame = 1;
     for (int i = 1; i <= n; i++)
         nodes[i].d[0] = read(), nodes[i].d[1] = read();
     groot = build(1, n);
