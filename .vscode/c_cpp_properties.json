@@ -28,12 +28,17 @@
         {
             "name": "macOS",
             "includePath": [
-                "/usr/local/include/c++/8.3.0/**"
+                "${workspaceFolder}/**"
             ],
-            "compilerPath": "/usr/local/bin/g++-8",
-            "cppStandard": "c++11",
-            "intelliSenseMode": "gcc-x64",
-            "cStandard": "c11"
+            "defines": [],
+            "macFrameworkPath": [],
+            "compilerPath": "/usr/local/bin/gcc-10",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "macos-gcc-x64",
+            "compilerArgs": [
+                "-g"
+            ]
         }
     ],
     "version": 4

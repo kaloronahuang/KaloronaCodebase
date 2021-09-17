@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "LLDB on macOS",
-            "type": "lldb",
+            "name": "C++: lldb on macOS",
+            "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}.out",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": true,
             "MIMode": "lldb"
@@ -23,9 +23,8 @@
             "program": "${file}",
             "console": "externalTerminal"
         },
-        
         {
-            "name": "gdb On Windows",
+            "name": "C++: gdb on Windows",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}.exe",
@@ -45,7 +44,7 @@
             ]
         },
         {
-            "name": "gdb On MinGW",
+            "name": "C++: gdb on MinGW",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}.exe",
