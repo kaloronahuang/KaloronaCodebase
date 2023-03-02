@@ -53,7 +53,7 @@
         {
             "label": "Build (macOS)",
             "type": "shell",
-            "command": "/usr/bin/clang++",
+            "command": "/usr/local/bin/g++-12",
             "args": [
                 "${fileDirname}/${fileBasenameNoExtension}.cpp",
                 "-o",
