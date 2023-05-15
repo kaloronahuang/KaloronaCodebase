@@ -32,7 +32,7 @@
             ],
             "defines": [],
             "macFrameworkPath": [],
-            "compilerPath": "/usr/local/bin/gcc-10",
+            "compilerPath": "/usr/local/bin/gcc-12",
             "cStandard": "gnu17",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "macos-gcc-x64",
